@@ -1,60 +1,20 @@
 import streamlit as st
 import os
 import json
-import io
 from PIL import Image
 from datetime import datetime
 from google import genai
-from google.oauth2 import service_account
-from googleapiclient.discovery import build
-from googleapiclient.http import MediaIoBaseUpload
 
 # 1. 페이지 설정
 st.set_page_config(page_title="엘케이어학원 학습 리포트", layout="centered")
 
-# 설정값
-FOLDER_ID = "1bMHs-3Ak27JU_ADF9_UVknkHjCEtumR2"
-HISTORY_FILE = "student_history.json"
-
-# 2. 클라이언트 설정 (오류 방지 표준 연결)
+# 2. 클라이언트 설정 (AI 분석용)
 if "gemini_api_key" in st.secrets:
     client = genai.Client(api_key=st.secrets["gemini_api_key"])
 else:
     st.error("Secrets에 'gemini_api_key'를 등록해 주세요.")
 
-# --- [기능 함수] ---
-def load_history():
-    if os.path.exists(HISTORY_FILE):
-        try:
-            with open(HISTORY_FILE, "r", encoding="utf-8") as f:
-                return json.load(f)
-        except: return {}
-    return {}
-
-def save_history(history):
-    with open(HISTORY_FILE, "w", encoding="utf-8") as f:
-        json.dump(history, f, ensure_ascii=False, indent=4)
-
-def upload_to_google_drive(content, file_name, folder_id):
-    try:
-        # Secrets에서 구글 드라이브 인증 정보를 파싱
-        info = json.loads(st.secrets["google_drive"]["service_account_json"])
-        creds = service_account.Credentials.from_service_account_info(info)
-        service = build('drive', 'v3', credentials=creds)
-        
-        file_metadata = {'name': file_name, 'parents': [folder_id]}
-        
-        # 'ascii' 인코딩 에러 방지를 위해 UTF-8 명시적 인코딩 적용
-        fh = io.BytesIO(content.encode('utf-8'))
-        media = MediaIoBaseUpload(fh, mimetype='text/plain', resumable=True)
-        
-        service.files().create(body=file_metadata, media_body=media, fields='id').execute()
-        return True, "성공"
-    except Exception as e:
-        return False, str(e)
-
-# 3. [데이터 완벽 복구] 상세 커리큘럼 데이터 정의
-
+# 3. 상세 커리큘럼 데이터 정의
 # [ELT 독해] 교재 리스트
 ELT_BOOKS = [
     "30 Word Reading(1)", "30 Word Reading(2)", "40 Word Reading(1)", "40 Word Reading(2)", 
@@ -88,7 +48,7 @@ AZAR_BASIC_FULL_LIST = [
     "7-5 There+Be동사 의문문", "7-6 How Many 의문문", "7-7 장소 전치사", "7-8 위치 전치사", "7-9 Would Like", "7-10 Would Like vs Like"
 ]
 
-# [라이팅 - OK 시리즈 및 트레이닝북 S1~S4 상세 목차]
+# [라이팅 - OK 시리즈 및 트레이닝북 전 시리즈 상세 커리큘럼]
 WRITING_DATA = {
     "OK Writing 1": ["Vocab", "Sentence 1~6", "Part 1. 전치사", "Part 2. 진행형", "Part 3. 부정문", "Part 4. and/because", "Part 5. 명령문", "Story 1-1~3-4"],
     "OK Writing 2": ["Vocab", "Sentence 1~6", "Part 1. 소유격", "Part 2. There is/are", "Part 3. but/because", "Part 4. 대상 2개", "Part 5. 의문문", "Part 6. look+형용사", "Part 7. don't", "Story 1-1~3-4"],
@@ -107,26 +67,17 @@ WRITING_DATA = {
 # --- [메인 화면 로직] ---
 if "page" not in st.session_state: st.session_state.page = 'input'
 if "ai_res" not in st.session_state: st.session_state.ai_res = ""
-history_data = load_history()
 
 if st.session_state.page == 'input':
     st.title("🍎 엘케이어학원 학습 리포트") 
-
-    with st.expander("🔍 학생 과거 정보 불러오기", expanded=False):
-        all_st = sorted(list(history_data.keys()))
-        search = st.selectbox("학생 선택", ["직접 입력"] + all_st)
-        last_rec = history_data.get(search, {}) if search != "직접 입력" else {}
-
-    st.divider()
 
     # 1. 기본 정보
     st.subheader("📍 1. 기본 정보")
     report_date = st.date_input("학습일 선택", value=datetime.today())
     c1, c2, c3 = st.columns(3)
-    grade = c1.selectbox("학년", ["초등", "중등", "고등"], index=["초등", "중등", "고등"].index(last_rec.get("grade", "초등")))
-    class_list = ["선택 없음", "Beginner-2시", "Beginner-3시", "Ph1", "Inter 2시", "G-Advanced 2시"]
-    class_name = c2.selectbox("반 선택", class_list, index=class_list.index(last_rec.get("class", "선택 없음")) if last_rec.get("class") in class_list else 0)
-    name = st.text_input("학생 이름", value=search if search != "직접 입력" else "")
+    grade = c1.selectbox("학년", ["초등", "중등", "고등"])
+    class_name = c2.selectbox("반 선택", ["선택 없음", "Beginner-2시", "Beginner-3시", "Ph1", "Inter 2시", "G-Advanced 2시"])
+    name = st.text_input("학생 이름", placeholder="이름 입력")
 
     st.divider()
 
@@ -140,7 +91,7 @@ if st.session_state.page == 'input':
 
     st.divider()
 
-    # 3. 주교재 수업 상세 (Unit 입력창 개별 분리 및 텍스트 입력화)
+    # 3. 주교재 수업 상세 (Unit 입력창 개별 분리 및 텍스트화)
     st.subheader("📚 3. 주교재 및 수업 상세")
     
     # [ELT 독해]
@@ -167,7 +118,7 @@ if st.session_state.page == 'input':
 
     st.divider()
 
-    # 4. 과제 정밀 분석 (명칭에서 'AI' 삭제)
+    # 4. 과제 정밀 분석 (명칭 수정 및 기능 유지)
     st.subheader("📸 4. 과제 정밀 분석")
     up_file = st.file_uploader("과제 사진 업로드", type=['jpg', 'png'])
     domain = st.selectbox("분석 영역", ["선택 안 함", "문법", "어휘", "독해", "라이팅"])
@@ -179,7 +130,6 @@ if st.session_state.page == 'input':
                     img = Image.open(up_file)
                     img.thumbnail((800, 800))
                     prompt = f"엘케이어학원 선생님으로서 이 {domain} 과제 사진을 보고 학생의 성취도를 한국어로 2~3문장 분석해줘."
-                    # 모델 호출 방식 표준화 (404 오류 해결)
                     res = client.models.generate_content(model="gemini-1.5-flash", contents=[prompt, img])
                     st.session_state.ai_res = res.text
                     st.success("분석 완료!")
@@ -194,22 +144,24 @@ if st.session_state.page == 'input':
     content = st.text_area("상세 피드백 (태도 등)")
     hw_status = st.selectbox("과제 수행도", ["매우 우수", "우수", "보통", "미흡"])
 
-    if st.button("리포트 생성 및 저장", type="primary"):
-        if not name: st.warning("이름을 입력하세요."); st.stop()
-        
-        display_class = f"{class_name} " if class_name != "선택 없음" else ""
-        target_info = f"{grade} {display_class}{name} 학생"
-        
-        items = []
-        if elt_book != "선택 안 함": items.append(f"• ELT독해: {elt_book} [{elt_unit}]")
-        if r_book != "선택 안 함": items.append(f"• 독해: {r_book} [{r_unit}]")
-        if g_book != "선택 안 함": items.append(f"• 문법: {g_book} [{g_sub}]")
-        if w_book != "선택 안 함": items.append(f"• 라이팅: {w_book} [{w_ls}]")
-        
-        f_sec = f"\n[선생님 피드백]\n{content}\n" if content.strip() else ""
-        a_sec = f"\n[과제 정밀 분석 - {domain}]\n{ai_fb}\n" if ai_fb.strip() else ""
+    # 리포트 생성 버튼
+    if st.button("리포트 생성", type="primary"):
+        if not name: 
+            st.warning("이름을 입력하세요.")
+        else:
+            display_class = f"{class_name} " if class_name != "선택 없음" else ""
+            target_info = f"{grade} {display_class}{name} 학생"
+            
+            items = []
+            if elt_book != "선택 안 함": items.append(f"• ELT독해: {elt_book} [{elt_unit}]")
+            if r_book != "선택 안 함": items.append(f"• 독해: {r_book} [{r_unit}]")
+            if g_book != "선택 안 함": items.append(f"• 문법: {g_book} [{g_sub}]")
+            if w_book != "선택 안 함": items.append(f"• 라이팅: {w_book} [{w_ls}]")
+            
+            f_sec = f"\n[선생님 피드백]\n{content}\n" if content.strip() else ""
+            a_sec = f"\n[과제 정밀 분석 - {domain}]\n{ai_fb}\n" if ai_fb.strip() else ""
 
-        report = f"""[ 엘케이어학원 학습 리포트 ]
+            report_text = f"""[ 엘케이어학원 학습 리포트 ]
 
 ■ 대상: {target_info}
 ■ 학습일: {report_date}
@@ -223,19 +175,15 @@ if st.session_state.page == 'input':
 {f_sec}{a_sec}
 3. 과제 수행도: {hw_status}"""
 
-        f_name = f"{report_date.strftime('%Y%m%d')}_{name}.txt"
-        success, msg = upload_to_google_drive(report, f_name, FOLDER_ID)
-        
-        if success:
-            history_data[name] = {"grade": grade, "class": class_name}
-            save_history(history_data)
-            st.session_state.final_text = report
-            st.session_state.page = 'result'; st.rerun()
-        else:
-            st.error(f"저장 실패: {msg}")
+            st.session_state.final_text = report_text
+            st.session_state.page = 'result'
+            st.rerun()
 
 elif st.session_state.page == 'result':
     st.title("📄 완성된 리포트")
-    st.text_area("텍스트 복사", st.session_state.final_text, height=450)
+    st.info("아래 텍스트를 복사해서 카톡에 붙여넣으세요.")
+    st.text_area("복사용 텍스트", st.session_state.final_text, height=500)
     if st.button("처음으로 돌아가기"):
-        st.session_state.ai_res = ""; st.session_state.page = 'input'; st.rerun()
+        st.session_state.ai_res = ""
+        st.session_state.page = 'input'
+        st.rerun()
