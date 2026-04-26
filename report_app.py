@@ -16,7 +16,7 @@ st.set_page_config(page_title="엘케이어학원 학습 리포트", layout="cen
 FOLDER_ID = "1bMHs-3Ak27JU_ADF9_UVknkHjCEtumR2"
 HISTORY_FILE = "student_history.json"
 
-# 2. AI 클라이언트 설정 (표준 연결 방식)
+# 2. AI 클라이언트 설정 (표준 안정화 버전)
 if "gemini_api_key" in st.secrets:
     client = genai.Client(api_key=st.secrets["gemini_api_key"])
 else:
@@ -49,9 +49,9 @@ def upload_to_google_drive(content, file_name, folder_id):
         return False, str(e)
 
 # 3. [데이터 완벽 복구] 상세 커리큘럼 데이터 정의
-UNIT_LIST = [f"<Unit {i:02d}>" for i in range(1, 17)] # 꺽쇠 유닛
+UNIT_LIST = [f"<Unit {i:02d}>" for i in range(1, 17)] # 꺽쇠 형식
 
-# [ELT 독해] 교재 리스트 복구
+# [ELT 독해] 교재 리스트
 ELT_BOOKS = [
     "30 Word Reading(1)", "30 Word Reading(2)", "40 Word Reading(1)", "40 Word Reading(2)", 
     "40 Read it(1)", "40 Read it(2)", "40 Read it(3)", "60 Read it(1)", "60 Read it(2)", "60 Read it(3)"
@@ -83,7 +83,7 @@ AZAR_BASIC_FULL_LIST = [
     "7-5 There+Be동사 의문문", "7-6 How Many 의문문", "7-7 장소 전치사", "7-8 위치 전치사", "7-9 Would Like", "7-10 Would Like vs Like"
 ]
 
-# [라이팅 - OK Writing 및 트레이닝북 상세 복구]
+# [라이팅 - OK 시리즈 및 트레이닝북 시리즈 전체 복구]
 WRITING_DATA = {
     "OK Writing 1": ["Vocab", "Sentence 1~6", "Part 1. 전치사", "Part 2. 진행형", "Part 3. 부정문", "Part 4. and/because", "Part 5. 명령문", "Story 1-1~3-4"],
     "OK Writing 2": ["Vocab", "Sentence 1~6", "Part 1. 소유격", "Part 2. There is/are", "Part 3. but/because", "Part 4. 대상 2개", "Part 5. 의문문", "Part 6. look+형용사", "Part 7. don't", "Story 1-1~3-4"],
@@ -93,7 +93,9 @@ WRITING_DATA = {
     "OK Writing 6": ["Vocab", "Sentence 1~8", "Part 1. 과거", "Part 2. have to", "Part 3. Did", "Part 4. didn't", "Part 5. 동명사주어", "Part 6. 의문사구", "Part 7. 접속사", "Story 1-1~1-6"],
     "OK Writing 7": ["Vocab", "Sentence 1~12", "Part 1. 동명사목적어", "Part 2. 가주어 it", "Part 3. 형용사보어", "Part 4. 재귀대명사", "Part 5. 의문사구", "Part 6. should", "Part 7. 지각동사", "Story 1-1~3-2"],
     "Bridge Writing Starter": ["Vocab", "Sentence 1~3", "Part 1. 복수", "Part 2. 소유격", "Part 3. 진행형", "Part 4. but", "Part 5. 명령문", "Story 1-1~3-3"],
-    "Bridge Writing 1~3": ["Vocab", "Sentence 1~6", "Part 1~6", "Story 1-1~3-4"],
+    "Bridge Writing 1": ["Vocab", "Sentence 1~5", "Part 1. 관사", "Part 2. 전치사", "Part 3. but/because", "Part 4. 부정문", "Part 5. 의문문", "Story 1-1~2-5"],
+    "Bridge Writing 2": ["Vocab", "Sentence 1~6", "Part 1. 의문사", "Part 2. 3인칭", "Part 3. 형용사보어", "Part 4. will", "Part 5. 's", "Part 6. Please", "Story 1-1~3-4"],
+    "Bridge Writing 3": ["Vocab", "Sentence 1~6", "Part 1. There", "Part 2. 소유격", "Part 3. 의문사", "Part 4. Don't", "Part 5. can", "Part 6. to", "Story 1-1~3-4"],
     "Training for Reading S1": ["Vocab", "Training 1", "Training 2", "Training 3", "Training 4", "Training 5", "Training 6", "Training 7", "Training 8", "Training 9", "Training 10", "Training 11"],
     "Training for Reading S2": ["Vocab", "Training 1", "Training 2", "Training 3", "Training 4", "Training 5", "Training 6", "Training 7", "Training 8", "Training 9", "Training 10", "Training 11"],
     "Training for Reading S3": ["Vocab", "Training 1~9", "Story 1", "Story 2", "Story 3"],
@@ -155,7 +157,7 @@ if st.session_state.page == 'input':
     elif g_book != "선택 안 함":
         g_sub = st.text_input("└ 단원명 직접 입력")
 
-    # [라이팅] 상세 목차 적용
+    # [라이팅] 트레이닝북 개별 선택 및 세부 단원 노출
     w_book = st.selectbox("라이팅 교재", ["선택 안 함"] + list(WRITING_DATA.keys()))
     w_ls = "선택 안 함"
     if w_book != "선택 안 함":
@@ -175,7 +177,7 @@ if st.session_state.page == 'input':
                     img = Image.open(up_file)
                     img.thumbnail((800, 800))
                     prompt = f"엘케이어학원 선생님으로서 이 {domain} 과제 사진을 보고 학생의 성취도를 한국어로 2~3문장 분석해줘."
-                    # 모델명을 직접 문자열로 호출하여 경로 오류 방지
+                    # 모델 경로를 정확하게 호출하여 404 오류 방지
                     res = client.models.generate_content(model="gemini-1.5-flash", contents=[prompt, img])
                     st.session_state.ai_res = res.text
                     st.success("분석 완료!")
