@@ -157,4 +157,28 @@ if st.session_state.page == 'input':
 ■ 학습일: {report_date}
 
 1. 어휘 테스트 결과
-- 교재명: {v_book} (Unit {v_unit
+- 교재명: {v_book} (Unit {v_unit})
+- 결과: {v_corr} / {v_tot} (정답률 {int((v_corr/v_tot)*100)}%)
+
+2. 주교재 학습 내용
+{"\n".join(main_items)}
+{f_sec}{a_sec}
+3. 과제 수행도: {hw_status}"""
+
+        file_name = f"{report_date.strftime('%Y%m%d')}_{name}.txt"
+        success, msg = upload_to_google_drive(report_text, file_name, FOLDER_ID)
+        
+        if success:
+            st.session_state.final_text = report_text
+            st.session_state.page = 'result'
+            st.rerun()
+        else:
+            st.error(f"저장 실패: {msg}")
+
+elif st.session_state.page == 'result':
+    st.title("📄 완성된 리포트")
+    st.text_area("텍스트 복사 (카톡용)", st.session_state.final_text, height=450)
+    if st.button("처음으로 돌아가기"):
+        st.session_state.ai_res = ""
+        st.session_state.page = 'input'
+        st.rerun()
