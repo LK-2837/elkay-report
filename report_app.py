@@ -16,7 +16,7 @@ st.set_page_config(page_title="엘케이어학원 학습 리포트", layout="cen
 FOLDER_ID = "1bMHs-3Ak27JU_ADF9_UVknkHjCEtumR2"
 HISTORY_FILE = "student_history.json"
 
-# 2. 클라이언트 설정 (표준 안정화 버전)
+# 2. 클라이언트 설정 (2026 표준 안정화 버전)
 if "gemini_api_key" in st.secrets:
     client = genai.Client(api_key=st.secrets["gemini_api_key"])
 else:
@@ -41,8 +41,9 @@ def upload_to_google_drive(content, file_name, folder_id):
         creds = service_account.Credentials.from_service_account_info(info)
         service = build('drive', 'v3', credentials=creds)
         
-        # 'ascii' 코덱 에러 방지를 위한 UTF-8 명시적 설정
         file_metadata = {'name': file_name, 'parents': [folder_id]}
+        
+        # 'ascii' 인코딩 에러 방지를 위해 명시적 UTF-8 인코딩 적용
         fh = io.BytesIO(content.encode('utf-8'))
         media = MediaIoBaseUpload(fh, mimetype='text/plain', resumable=True)
         
@@ -52,15 +53,13 @@ def upload_to_google_drive(content, file_name, folder_id):
         return False, str(e)
 
 # 3. [데이터 완벽 복구] 상세 커리큘럼 데이터 정의
-UNIT_LIST = [f"<Unit {i:02d}>" for i in range(1, 17)] # 꺽쇠 형식
-
-# [ELT 독해] 시리즈 복구
+# [ELT 독해] 교재 리스트
 ELT_BOOKS = [
     "30 Word Reading(1)", "30 Word Reading(2)", "40 Word Reading(1)", "40 Word Reading(2)", 
     "40 Read it(1)", "40 Read it(2)", "40 Read it(3)", "60 Read it(1)", "60 Read it(2)", "60 Read it(3)"
 ]
 
-# [독해] 개별 교재 및 영자신문 세분화
+# [독해] 영자신문 세분화 및 개별 교재 리스트
 READING_BOOKS = [
     "리딩튜터 스타터(1)", "리딩튜터 스타터(2)", "리딩튜터 스타터(3)",
     "리딩튜터 주니어(1)", "리딩튜터 주니어(2)", "리딩튜터 주니어(3)", "리딩튜터 주니어(4)",
@@ -68,7 +67,7 @@ READING_BOOKS = [
     "English Newspaper_Kids", "English Newspaper_Kinder", "자체 독해 자료"
 ]
 
-# [문법] Azar Basic 1권 통합 세부 목차
+# [문법] Azar Basic 1권 통합 세부 목차 (1-1 ~ 7-10)
 AZAR_BASIC_FULL_LIST = [
     "1-1 단수 인칭대명사+Be동사", "1-2 복수 인칭대명사+Be동사", "1-3 단수 명사+Be동사", "1-4 복수 명사+Be동사", 
     "1-5 인칭대명사+Be동사 축약", "1-6 Be동사 부정문", "1-7 Be동사+형용사", "1-8 Be동사+장소", "1-9 Be동사 구조 요약",
@@ -79,7 +78,7 @@ AZAR_BASIC_FULL_LIST = [
     "3-9 Yes/No 의문문", "3-10 Where/What 의문문", "3-11 When/What Time 의문문",
     "4-1 현재진행형 Be+-ing", "4-2 동사의 -ing", "4-3 현재진행 부정문", "4-4 현재진행 의문문", 
     "4-5 현재 vs 진행", "4-6 상태동사", "4-7 See/Look/Watch/Hear/Listen", "4-8 Think About vs That", "4-9 명령문",
-    "5-1 명사 단수/복수", "5-2 불규칙 복수형", "5-3 형용사 쓰임", "5-4 명사: 주어/목적어", 
+    "5-1 명사 단수/복수", "5-2 불규칙 복수형", "5-3 형용사의 쓰임", "5-4 명사: 주어/목적어", 
     "5-5 주격/목적격 대명사", "5-6 전치사+목적격 대명사", "5-7 소유형용사/대명사", "5-8 명사 소유격", "5-9 Whose 의문문", "5-10 소유격 불규칙 복수",
     "6-1 셀 수 있는/없는 명사", "6-2 A vs An", "6-3 A/An vs Some", "6-4 물질명사 수량", 
     "6-5 Many/Much/Few/Little", "6-6 정관사 The", "6-7 관사 미사용", "6-8 Some/Any",
@@ -87,7 +86,7 @@ AZAR_BASIC_FULL_LIST = [
     "7-5 There+Be동사 의문문", "7-6 How Many 의문문", "7-7 장소 전치사", "7-8 위치 전치사", "7-9 Would Like", "7-10 Would Like vs Like"
 ]
 
-# [라이팅 - OK 1~7 상세 및 트레이닝북 전체 상세 복구]
+# [라이팅 - 전 시리즈 상세 커리큘럼]
 WRITING_DATA = {
     "OK Writing 1": ["Vocab", "Sentence 1~6", "Part 1. 전치사", "Part 2. 진행형", "Part 3. 부정문", "Part 4. and/because", "Part 5. 명령문", "Story 1-1~3-4"],
     "OK Writing 2": ["Vocab", "Sentence 1~6", "Part 1. 소유격", "Part 2. There is/are", "Part 3. but/because", "Part 4. 대상 2개", "Part 5. 의문문", "Part 6. look+형용사", "Part 7. don't", "Story 1-1~3-4"],
@@ -133,19 +132,22 @@ if st.session_state.page == 'input':
     st.subheader("🅰️ 2. 어휘 (Vocabulary)")
     v_book = st.selectbox("어휘 교재", ["능률 보카 기본", "능률 보카 필수", "교육청 900", "기타"])
     cv1, cv2, cv3 = st.columns(3)
-    v_unit = cv1.selectbox("Unit 선택", UNIT_LIST)
+    v_unit = cv1.text_input("Unit 입력", placeholder="예: <Unit 01>")
     v_corr = cv2.number_input("맞은 개수", min_value=0)
     v_tot = cv3.number_input("전체 개수", min_value=1, value=20)
 
     st.divider()
 
-    # 3. 주교재 수업 상세
+    # 3. 주교재 수업 상세 (Unit 입력창 분리 및 텍스트화)
     st.subheader("📚 3. 주교재 및 수업 상세")
     
-    # [ELT 및 독해]
+    # [ELT 독해]
     elt_book = st.selectbox("ELT 독해 교재", ["선택 안 함"] + ELT_BOOKS)
+    elt_unit = st.text_input("└ ELT Unit 입력", placeholder="예: <Unit 01>")
+
+    # [독해]
     r_book = st.selectbox("독해 교재", ["선택 안 함"] + READING_BOOKS)
-    r_unit = st.selectbox("독해/ELT Unit", ["선택 안 함"] + UNIT_LIST)
+    r_unit = st.text_input("└ 독해 Unit 입력", placeholder="예: <Unit 01>")
 
     # [문법]
     g_book = st.selectbox("문법 교재", ["선택 안 함", "Azar Basic (Red)", "Azar Fundamentals", "기타"])
@@ -155,7 +157,7 @@ if st.session_state.page == 'input':
     elif g_book != "선택 안 함":
         g_sub = st.text_input("└ 단원명 직접 입력")
 
-    # [라이팅] 상세 커리큘럼 복구
+    # [라이팅]
     w_book = st.selectbox("라이팅 교재", ["선택 안 함"] + list(WRITING_DATA.keys()))
     w_ls = "선택 안 함"
     if w_book != "선택 안 함":
@@ -163,7 +165,7 @@ if st.session_state.page == 'input':
 
     st.divider()
 
-    # 4. 과제 정밀 분석 (AI 삭제)
+    # 4. 과제 정밀 분석 (명칭 변경)
     st.subheader("📸 4. 과제 정밀 분석")
     up_file = st.file_uploader("과제 사진 업로드", type=['jpg', 'png'])
     domain = st.selectbox("분석 영역", ["선택 안 함", "문법", "어휘", "독해", "라이팅"])
@@ -175,7 +177,6 @@ if st.session_state.page == 'input':
                     img = Image.open(up_file)
                     img.thumbnail((800, 800))
                     prompt = f"엘케이어학원 선생님으로서 이 {domain} 과제 사진을 보고 학생의 성취도를 한국어로 2~3문장 분석해줘."
-                    # 모델 호출 방식 표준화 (404 오류 방지)
                     res = client.models.generate_content(model="gemini-1.5-flash", contents=[prompt, img])
                     st.session_state.ai_res = res.text
                     st.success("분석 완료!")
@@ -197,13 +198,12 @@ if st.session_state.page == 'input':
         target_info = f"{grade} {display_class}{name} 학생"
         
         items = []
-        if elt_book != "선택 안 함": items.append(f"• ELT독해: {elt_book} [{r_unit}]")
+        if elt_book != "선택 안 함": items.append(f"• ELT독해: {elt_book} [{elt_unit}]")
         if r_book != "선택 안 함": items.append(f"• 독해: {r_book} [{r_unit}]")
         if g_book != "선택 안 함": items.append(f"• 문법: {g_book} [{g_sub}]")
         if w_book != "선택 안 함": items.append(f"• 라이팅: {w_book} [{w_ls}]")
         
         f_sec = f"\n[선생님 피드백]\n{content}\n" if content.strip() else ""
-        # UI에서 'AI' 삭제했으므로 출력 리포트 명칭도 변경
         a_sec = f"\n[과제 정밀 분석 - {domain}]\n{ai_fb}\n" if ai_fb.strip() else ""
 
         report = f"""[ 엘케이어학원 학습 리포트 ]
@@ -220,7 +220,6 @@ if st.session_state.page == 'input':
 {f_sec}{a_sec}
 3. 과제 수행도: {hw_status}"""
 
-        # 한글 파일명 생성 (UTF-8 인코딩 고려)
         f_name = f"{report_date.strftime('%Y%m%d')}_{name}.txt"
         success, msg = upload_to_google_drive(report, f_name, FOLDER_ID)
         
