@@ -4,7 +4,7 @@ import json
 import io
 from PIL import Image
 from datetime import datetime
-from google import genai  # 최신 방식은 이렇습니다!
+from google import genai
 from google.oauth2 import service_account
 from googleapiclient.discovery import build
 from googleapiclient.http import MediaIoBaseUpload
@@ -16,7 +16,7 @@ st.set_page_config(page_title="엘케이어학원 학습 리포트", layout="cen
 FOLDER_ID = "1bMHs-3Ak27JU_ADF9_UVknkHjCEtumR2"
 HISTORY_FILE = "student_history.json"
 
-# 2. 최신형 AI 클라이언트 설정
+# 2. AI 클라이언트 설정
 if "gemini_api_key" in st.secrets:
     client = genai.Client(api_key=st.secrets["gemini_api_key"])
 else:
@@ -56,31 +56,23 @@ if st.session_state.page == 'input':
     uploaded_file = st.file_uploader("과제 사진 업로드", type=['jpg', 'jpeg', 'png'])
     domain = st.selectbox("분석 영역", ["선택 안 함", "문법", "어휘", "독해", "라이팅"])
     
-    # [AI 분석 버튼] 사진이 있고 영역을 선택했을 때만 마법처럼 나타납니다!
     if uploaded_file and domain != "선택 안 함":
-        st.success(f"✅ {domain} 사진 업로드 완료! 아래 버튼을 누르세요.")
-        if st.button("🤖 AI 과제 분석 시작 (초고속 모드)"):
-            with st.spinner("AI 선생님이 분석 중입니다..."):
+        if st.button("🤖 AI 과제 분석 시작"):
+            with st.spinner("분석 중..."):
                 try:
                     img = Image.open(uploaded_file)
-                    # 속도를 위해 사진 크기 최적화
                     img.thumbnail((1024, 1024))
-                    
                     prompt = f"너는 엘케이어학원 선생님이야. 이 {domain} 과제 사진을 보고 학생의 학습 상태를 정중하게 분석해줘. 한국어로 2~3문장으로 써줘."
-                    response = client.models.generate_content(
-                        model="gemini-1.5-flash",
-                        contents=[prompt, img]
-                    )
+                    response = client.models.generate_content(model="gemini-1.5-flash", contents=[prompt, img])
                     st.session_state.ai_res = response.text
                 except Exception as e:
-                    st.error(f"분석 중 오류 발생: {e}")
+                    st.error(f"분석 오류: {e}")
 
     ai_feedback = st.text_area("AI 분석 결과", value=st.session_state.ai_res, height=150)
     content = st.text_area("선생님 추가 피드백")
     hw_status = st.selectbox("과제 수행도", ["매우 우수", "우수", "보통", "미흡"])
 
     if st.button("리포트 생성 및 저장", type="primary"):
-        # [반명 로직] '선택 없음'이면 아예 공간 삭제
         display_class = f"{class_name} " if class_name != "선택 없음" else ""
         target_info = f"{grade} {display_class}{name} 학생"
         
@@ -89,7 +81,7 @@ if st.session_state.page == 'input':
 ■ 대상: {target_info}
 ■ 학습일: {report_date}
 
-1. 학습 내용
+[ 상세 내용 ]
 • 분석 영역: {domain}
 • 선생님 피드백: {content}
 
