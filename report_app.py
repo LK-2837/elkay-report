@@ -16,7 +16,7 @@ st.set_page_config(page_title="엘케이어학원 학습 리포트", layout="cen
 FOLDER_ID = "1bMHs-3Ak27JU_ADF9_UVknkHjCEtumR2"
 HISTORY_FILE = "student_history.json"
 
-# 2. 클라이언트 설정
+# 2. 클라이언트 설정 (오류 방지 표준 연결)
 if "gemini_api_key" in st.secrets:
     client = genai.Client(api_key=st.secrets["gemini_api_key"])
 else:
@@ -37,14 +37,14 @@ def save_history(history):
 
 def upload_to_google_drive(content, file_name, folder_id):
     try:
-        # Secrets에서 JSON 정보를 파싱
+        # Secrets에서 구글 드라이브 인증 정보를 파싱
         info = json.loads(st.secrets["google_drive"]["service_account_json"])
         creds = service_account.Credentials.from_service_account_info(info)
         service = build('drive', 'v3', credentials=creds)
         
         file_metadata = {'name': file_name, 'parents': [folder_id]}
         
-        # 인코딩 에러 방지를 위해 UTF-8 적용
+        # 'ascii' 인코딩 에러 방지를 위해 UTF-8 명시적 인코딩 적용
         fh = io.BytesIO(content.encode('utf-8'))
         media = MediaIoBaseUpload(fh, mimetype='text/plain', resumable=True)
         
@@ -54,6 +54,7 @@ def upload_to_google_drive(content, file_name, folder_id):
         return False, str(e)
 
 # 3. [데이터 완벽 복구] 상세 커리큘럼 데이터 정의
+
 # [ELT 독해] 교재 리스트
 ELT_BOOKS = [
     "30 Word Reading(1)", "30 Word Reading(2)", "40 Word Reading(1)", "40 Word Reading(2)", 
@@ -87,7 +88,7 @@ AZAR_BASIC_FULL_LIST = [
     "7-5 There+Be동사 의문문", "7-6 How Many 의문문", "7-7 장소 전치사", "7-8 위치 전치사", "7-9 Would Like", "7-10 Would Like vs Like"
 ]
 
-# [라이팅 - OK 1~7 상세 및 트레이닝북 전 단원 복구]
+# [라이팅 - OK 시리즈 및 트레이닝북 S1~S4 상세 목차]
 WRITING_DATA = {
     "OK Writing 1": ["Vocab", "Sentence 1~6", "Part 1. 전치사", "Part 2. 진행형", "Part 3. 부정문", "Part 4. and/because", "Part 5. 명령문", "Story 1-1~3-4"],
     "OK Writing 2": ["Vocab", "Sentence 1~6", "Part 1. 소유격", "Part 2. There is/are", "Part 3. but/because", "Part 4. 대상 2개", "Part 5. 의문문", "Part 6. look+형용사", "Part 7. don't", "Story 1-1~3-4"],
@@ -139,7 +140,7 @@ if st.session_state.page == 'input':
 
     st.divider()
 
-    # 3. 주교재 수업 상세 (Unit 입력창 개별 분리)
+    # 3. 주교재 수업 상세 (Unit 입력창 개별 분리 및 텍스트 입력화)
     st.subheader("📚 3. 주교재 및 수업 상세")
     
     # [ELT 독해]
@@ -166,7 +167,7 @@ if st.session_state.page == 'input':
 
     st.divider()
 
-    # 4. 과제 정밀 분석
+    # 4. 과제 정밀 분석 (명칭에서 'AI' 삭제)
     st.subheader("📸 4. 과제 정밀 분석")
     up_file = st.file_uploader("과제 사진 업로드", type=['jpg', 'png'])
     domain = st.selectbox("분석 영역", ["선택 안 함", "문법", "어휘", "독해", "라이팅"])
@@ -178,6 +179,7 @@ if st.session_state.page == 'input':
                     img = Image.open(up_file)
                     img.thumbnail((800, 800))
                     prompt = f"엘케이어학원 선생님으로서 이 {domain} 과제 사진을 보고 학생의 성취도를 한국어로 2~3문장 분석해줘."
+                    # 모델 호출 방식 표준화 (404 오류 해결)
                     res = client.models.generate_content(model="gemini-1.5-flash", contents=[prompt, img])
                     st.session_state.ai_res = res.text
                     st.success("분석 완료!")
