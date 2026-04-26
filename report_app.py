@@ -16,7 +16,7 @@ st.set_page_config(page_title="엘케이어학원 학습 리포트", layout="cen
 FOLDER_ID = "1bMHs-3Ak27JU_ADF9_UVknkHjCEtumR2"
 HISTORY_FILE = "student_history.json"
 
-# 2. AI 클라이언트 설정 (2026 안정화 버전)
+# 2. AI 클라이언트 설정 (2026 안정화 연결 방식)
 if "gemini_api_key" in st.secrets:
     client = genai.Client(api_key=st.secrets["gemini_api_key"])
 else:
@@ -83,7 +83,7 @@ AZAR_BASIC_FULL_LIST = [
     "7-5 There+Be동사 의문문", "7-6 How Many 의문문", "7-7 장소 전치사", "7-8 위치 전치사", "7-9 Would Like", "7-10 Would Like vs Like"
 ]
 
-# [라이팅 - OK 시리즈 및 트레이닝북 전체 복구]
+# [라이팅 - OK 시리즈 및 트레이닝북 전체 상세 복구]
 WRITING_DATA = {
     "OK Writing 1": ["Vocab", "Sentence 1~6", "Part 1. 전치사", "Part 2. 진행형", "Part 3. 부정문", "Part 4. and/because", "Part 5. 명령문", "Story 1-1~3-4"],
     "OK Writing 2": ["Vocab", "Sentence 1~6", "Part 1. 소유격", "Part 2. There is/are", "Part 3. but/because", "Part 4. 대상 2개", "Part 5. 의문문", "Part 6. look+형용사", "Part 7. don't", "Story 1-1~3-4"],
@@ -92,7 +92,8 @@ WRITING_DATA = {
     "OK Writing 5": ["Vocab", "Sentence 1~9", "Part 1. 명령문", "Part 2. 빈도부사", "Part 3. Does", "Part 4. to부정사", "Part 5. 원급", "Part 6. 비교급", "Part 7. 최상급", "Story 1-1~2-2"],
     "OK Writing 6": ["Vocab", "Sentence 1~8", "Part 1. 과거", "Part 2. have to", "Part 3. Did", "Part 4. didn't", "Part 5. 동명사주어", "Part 6. 의문사구", "Part 7. 접속사", "Story 1-1~1-6"],
     "OK Writing 7": ["Vocab", "Sentence 1~12", "Part 1. 동명사목적어", "Part 2. 가주어 it", "Part 3. 형용사보어", "Part 4. 재귀대명사", "Part 5. 의문사구", "Part 6. should", "Part 7. 지각동사", "Story 1-1~3-2"],
-    "Bridge Writing 시리즈": ["Vocab", "Sentence 1~6", "Part 1~6", "Story"],
+    "Bridge Writing Starter": ["Vocab", "Sentence 1~3", "Part 1. 복수", "Part 2. 소유격", "Part 3. 진행형", "Part 4. but", "Part 5. 명령문", "Story 1-1~3-3"],
+    "Bridge Writing 1~3": ["Vocab", "Sentence 1~6", "Part 1~6", "Story 1-1~3-4"],
     "Training for Reading S1": ["Vocabulary", "Training 1. a/an/the+명사", "Training 2. 복수명사", "Training 3. 형용사+명사", "Training 4. 전치사+명사 (1)", "Training 5. 전치사+명사 (2)", "Training 6. 전치사+명사 (3)", "Training 7. 주인공+동작 (1)", "Training 8. 주인공+동작 (2)", "Training 9. 주인공+동작 (3)", "Training 10. 주인공+동작+대상 (1)", "Training 11. 주인공+동작+대상 (2)"],
     "Training for Reading S2": ["Vocabulary", "Training 1. 주인공+be+명사 (1)", "Training 2. 주인공+be+명사 (2)", "Training 3. 주인공+be+형용사", "Training 4. 주인공+be+명사/형용사 (1)", "Training 5. 주인공+be+명사/형용사 (2)", "Training 6. 주인공+be+명사/형용사 (3)", "Training 7. 주인공+be+전치사+명사 (1)", "Training 8. 주인공+be+전치사+명사 (2)", "Training 9. 주인공+be+전치사+명사 (3)", "Training 10. 주인공+be+명사/형용사/전치사 (Review)", "Training 11. 명령문"],
     "Training for Reading S3": ["Vocabulary", "Training 1. This/That+is+단수명사", "Training 2. This/That+is+소유격+명사 (1)", "Training 3. This/That+is+소유격+명사 (2)", "Training 4. 주인공과 대상이 ‘소유격+명사’", "Training 5. 주인공+동작+전치사+명사", "Training 6. 주인공+동작+대상+전치사+명사", "Training 7. 명령문: 동작+(대상)+전치사+명사", "Training 8. 주인공+be+~ing+(대상)", "Training 9. 주인공+be+~ing+(대상)+전치사+명사", "Story 1-1", "Story 1-2", "Story 1-3", "Story 2", "Story 3"],
@@ -107,6 +108,7 @@ history = load_history()
 if st.session_state.page == 'input':
     st.title("🍎 엘케이어학원 학습 리포트") 
 
+    # [과거 기록 불러오기]
     with st.expander("🔍 학생 과거 정보 불러오기", expanded=False):
         all_st = sorted(list(history.keys()))
         search = st.selectbox("학생 선택", ["직접 입력"] + all_st)
@@ -142,19 +144,19 @@ if st.session_state.page == 'input':
     elt_book = st.selectbox("ELT 독해 교재", ["선택 안 함"] + ELT_BOOKS)
     elt_unit = st.selectbox("ELT Unit", ["선택 안 함"] + UNIT_LIST)
 
-    # [독해]
+    # [독해] 개별 선택
     r_book = st.selectbox("독해 교재", ["선택 안 함"] + READING_BOOKS)
     r_unit = st.selectbox("독해 Unit", ["선택 안 함"] + UNIT_LIST)
 
     # [문법] Azar 통합 리스트
-    g_book = st.selectbox("문법 교재", ["선택 안 함", "Azar Basic (Red)", "기타"])
+    g_book = st.selectbox("문법 교재", ["선택 안 함", "Azar Basic (Red)", "Azar Fundamentals", "기타"])
     g_sub = "선택 안 함"
     if g_book == "Azar Basic (Red)":
         g_sub = st.selectbox("└ Azar 세부 항목 (1-1 ~ 7-10)", AZAR_BASIC_FULL_LIST)
     elif g_book != "선택 안 함":
         g_sub = st.text_input("└ 단원명 직접 입력")
 
-    # [라이팅] OK 시리즈 및 트레이닝북 상세 노출
+    # [라이팅] 전 시리즈 상세 세부 단원 노출
     w_book = st.selectbox("라이팅 교재", ["선택 안 함"] + list(WRITING_DATA.keys()))
     w_ls = "선택 안 함"
     if w_book != "선택 안 함":
@@ -162,14 +164,14 @@ if st.session_state.page == 'input':
 
     st.divider()
 
-    # 4. AI 과제 분석 (404 오류 해결)
+    # 4. AI 과제 분석 (404 오류 해결을 위한 표준 호출)
     st.subheader("📸 4. AI 과제 분석")
     up_file = st.file_uploader("과제 사진 업로드", type=['jpg', 'png'])
     domain = st.selectbox("분석 영역", ["선택 안 함", "문법", "어휘", "독해", "라이팅"])
     
     if st.button("🤖 AI 분석 시작"):
         if up_file and domain != "선택 안 함":
-            with st.spinner("선생님, 분석 중입니다..."):
+            with st.spinner("분석 중..."):
                 try:
                     img = Image.open(up_file)
                     img.thumbnail((800, 800))
