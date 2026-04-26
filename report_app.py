@@ -16,7 +16,7 @@ st.set_page_config(page_title="엘케이어학원 학습 리포트", layout="cen
 FOLDER_ID = "1bMHs-3Ak27JU_ADF9_UVknkHjCEtumR2"
 HISTORY_FILE = "student_history.json"
 
-# 2. AI 클라이언트 설정 (연결 방식 최적화)
+# 2. AI 클라이언트 설정 (2026 최신 연결 방식)
 if "gemini_api_key" in st.secrets:
     client = genai.Client(api_key=st.secrets["gemini_api_key"])
 else:
@@ -48,10 +48,10 @@ def upload_to_google_drive(content, file_name, folder_id):
     except Exception as e:
         return False, str(e)
 
-# 3. [데이터 완벽 복구] 상세 커리큘럼 정의
-UNIT_LIST = [f"<Unit {i:02d}>" for i in range(1, 17)]
+# 3. [데이터 완벽 복구] 상세 커리큘럼 데이터 정의
+UNIT_LIST = [f"<Unit {i:02d}>" for i in range(1, 17)] # 꺽쇠 유닛
 
-# [독해] 개별 교재 상세 리스트
+# [독해] 개별 교재 상세 리스트 (단순화 제거)
 READING_BOOKS = [
     "리딩튜터 스타터(1)", "리딩튜터 스타터(2)", "리딩튜터 스타터(3)",
     "리딩튜터 주니어(1)", "리딩튜터 주니어(2)", "리딩튜터 주니어(3)", "리딩튜터 주니어(4)",
@@ -70,7 +70,7 @@ AZAR_BASIC_FULL_LIST = [
     "3-9 Yes/No 의문문", "3-10 Where/What 의문문", "3-11 When/What Time 의문문",
     "4-1 현재진행형 Be+-ing", "4-2 동사의 -ing", "4-3 현재진행 부정문", "4-4 현재진행 의문문", 
     "4-5 현재 vs 진행", "4-6 상태동사", "4-7 See/Look/Watch/Hear/Listen", "4-8 Think About vs That", "4-9 명령문",
-    "5-1 명사 단수/복수", "5-2 불규칙 복수형", "5-3 형용사 쓰임", "5-4 주어/목적어", 
+    "5-1 명사 단수/복수", "5-2 불규칙 복수형", "5-3 형용사의 쓰임", "5-4 명사: 주어/목적어", 
     "5-5 주격/목적격 대명사", "5-6 전치사+목적격 대명사", "5-7 소유형용사/대명사", "5-8 명사 소유격", "5-9 Whose 의문문", "5-10 소유격 불규칙 복수",
     "6-1 셀 수 있는/없는 명사", "6-2 A vs An", "6-3 A/An vs Some", "6-4 물질명사 수량", 
     "6-5 Many/Much/Few/Little", "6-6 정관사 The", "6-7 관사 미사용", "6-8 Some/Any",
@@ -78,7 +78,7 @@ AZAR_BASIC_FULL_LIST = [
     "7-5 There+Be동사 의문문", "7-6 How Many 의문문", "7-7 장소 전치사", "7-8 위치 전치사", "7-9 Would Like", "7-10 Would Like vs Like"
 ]
 
-# [라이팅] 전 시리즈 상세 세부 목차 (100% 복구)
+# [라이팅] 전 시리즈 상세 세부 목차 (완벽 복구)
 WRITING_DATA = {
     "OK Writing 1": ["Vocab", "Sentence 1~6", "Part 1. 전치사", "Part 2. 진행형", "Part 3. 부정문", "Part 4. and/because", "Part 5. 명령문", "Story 1-1~3-4"],
     "OK Writing 2": ["Vocab", "Sentence 1~6", "Part 1. 소유격", "Part 2. There is/are", "Part 3. but/because", "Part 4. 대상 2개", "Part 5. 의문문", "Part 6. look+형용사", "Part 7. don't", "Story 1-1~3-4"],
@@ -105,7 +105,7 @@ history = load_history()
 if st.session_state.page == 'input':
     st.title("🍎 엘케이어학원 학습 리포트") 
 
-    # [과거 기록 불러오기]
+    # [과거 기록 로드]
     with st.expander("🔍 학생 과거 정보 불러오기", expanded=False):
         all_st = sorted(list(history.keys()))
         search = st.selectbox("학생 선택", ["직접 입력"] + all_st)
@@ -157,7 +157,7 @@ if st.session_state.page == 'input':
 
     st.divider()
 
-    # 4. AI 과제 분석 (오류 해결 연결 방식)
+    # 4. AI 과제 분석 (404 오류 해결 연결 방식)
     st.subheader("📸 4. AI 과제 분석")
     up_file = st.file_uploader("과제 사진 업로드", type=['jpg', 'png'])
     domain = st.selectbox("분석 영역", ["선택 안 함", "문법", "어휘", "독해", "라이팅"])
@@ -169,16 +169,16 @@ if st.session_state.page == 'input':
                     img = Image.open(up_file)
                     img.thumbnail((800, 800))
                     prompt = f"엘케이어학원 선생님으로서 이 {domain} 과제 사진을 보고 학생의 성취도를 한국어로 2~3문장 분석해줘."
-                    # 모델명을 정확하게 "gemini-1.5-flash"로 호출 (404 오류 방지)
+                    # 모델명을 "gemini-1.5-flash"로 직접 호출 (경로 오류 방지)
                     res = client.models.generate_content(model="gemini-1.5-flash", contents=[prompt, img])
                     st.session_state.ai_res = res.text
-                except Exception as e: st.error(f"오류: {e}")
+                except Exception as e: st.error(f"AI 분석 중 오류가 발생했습니다: {e}")
 
     ai_fb = st.text_area("AI 분석 결과", value=st.session_state.ai_res, height=120)
 
     st.divider()
 
-    # 5. 총평
+    # 5. 선생님 총평
     st.subheader("✍️ 5. 선생님 총평")
     content = st.text_area("상세 피드백 (수업 태도 등)")
     hw_status = st.selectbox("과제 수행도", ["매우 우수", "우수", "보통", "미흡"])
