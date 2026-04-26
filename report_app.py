@@ -203,4 +203,6 @@ if st.session_state.page == 'input':
 
 elif st.session_state.page == 'result':
     st.title("📄 완성된 리포트")
-    st.text_area("텍스트 복사", st
+    st.text_area("텍스트 복사", st.session_state.final_text, height=450)
+    if st.button("처음으로 돌아가기"):
+        st.session_state.ai_res = ""; st.session_state.page = 'input'; st.rerun()
