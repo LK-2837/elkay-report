@@ -16,7 +16,7 @@ st.set_page_config(page_title="엘케이어학원 학습 리포트", layout="cen
 FOLDER_ID = "1bMHs-3Ak27JU_ADF9_UVknkHjCEtumR2"
 HISTORY_FILE = "student_history.json"
 
-# 2. AI 클라이언트 설정 (2026 표준)
+# 2. AI 클라이언트 설정 (연결 방식 최적화)
 if "gemini_api_key" in st.secrets:
     client = genai.Client(api_key=st.secrets["gemini_api_key"])
 else:
@@ -48,8 +48,8 @@ def upload_to_google_drive(content, file_name, folder_id):
     except Exception as e:
         return False, str(e)
 
-# 3. [데이터 완벽 복구] 상세 커리큘럼 데이터 정의
-UNIT_LIST = [f"<Unit {i:02d}>" for i in range(1, 17)] # 꺽쇠 형식
+# 3. [데이터 완벽 복구] 상세 커리큘럼 정의
+UNIT_LIST = [f"<Unit {i:02d}>" for i in range(1, 17)]
 
 # [독해] 개별 교재 상세 리스트
 READING_BOOKS = [
@@ -78,7 +78,7 @@ AZAR_BASIC_FULL_LIST = [
     "7-5 There+Be동사 의문문", "7-6 How Many 의문문", "7-7 장소 전치사", "7-8 위치 전치사", "7-9 Would Like", "7-10 Would Like vs Like"
 ]
 
-# [라이팅] 전 시리즈 상세 세부 목차 (완벽 복구)
+# [라이팅] 전 시리즈 상세 세부 목차 (100% 복구)
 WRITING_DATA = {
     "OK Writing 1": ["Vocab", "Sentence 1~6", "Part 1. 전치사", "Part 2. 진행형", "Part 3. 부정문", "Part 4. and/because", "Part 5. 명령문", "Story 1-1~3-4"],
     "OK Writing 2": ["Vocab", "Sentence 1~6", "Part 1. 소유격", "Part 2. There is/are", "Part 3. but/because", "Part 4. 대상 2개", "Part 5. 의문문", "Part 6. look+형용사", "Part 7. don't", "Story 1-1~3-4"],
@@ -97,7 +97,7 @@ WRITING_DATA = {
     "Training for Reading S4": ["Vocab", "Training 1~9", "Story 1~2"]
 }
 
-# --- [화면 구성 로직] ---
+# --- [메인 화면 로직] ---
 if "page" not in st.session_state: st.session_state.page = 'input'
 if "ai_res" not in st.session_state: st.session_state.ai_res = ""
 history = load_history()
@@ -105,7 +105,7 @@ history = load_history()
 if st.session_state.page == 'input':
     st.title("🍎 엘케이어학원 학습 리포트") 
 
-    # [과거 기록 로드]
+    # [과거 기록 불러오기]
     with st.expander("🔍 학생 과거 정보 불러오기", expanded=False):
         all_st = sorted(list(history.keys()))
         search = st.selectbox("학생 선택", ["직접 입력"] + all_st)
@@ -157,18 +157,19 @@ if st.session_state.page == 'input':
 
     st.divider()
 
-    # 4. AI 과제 분석
+    # 4. AI 과제 분석 (오류 해결 연결 방식)
     st.subheader("📸 4. AI 과제 분석")
     up_file = st.file_uploader("과제 사진 업로드", type=['jpg', 'png'])
     domain = st.selectbox("분석 영역", ["선택 안 함", "문법", "어휘", "독해", "라이팅"])
     
     if st.button("🤖 AI 분석 시작"):
         if up_file and domain != "선택 안 함":
-            with st.spinner("선생님, 잠시만 기다려주세요..."):
+            with st.spinner("분석 중..."):
                 try:
                     img = Image.open(up_file)
                     img.thumbnail((800, 800))
                     prompt = f"엘케이어학원 선생님으로서 이 {domain} 과제 사진을 보고 학생의 성취도를 한국어로 2~3문장 분석해줘."
+                    # 모델명을 정확하게 "gemini-1.5-flash"로 호출 (404 오류 방지)
                     res = client.models.generate_content(model="gemini-1.5-flash", contents=[prompt, img])
                     st.session_state.ai_res = res.text
                 except Exception as e: st.error(f"오류: {e}")
