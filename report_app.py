@@ -4,7 +4,7 @@ import json
 import io
 from PIL import Image
 from datetime import datetime
-from google import genai  # 2026년 최신형 AI 라이브러리
+from google import genai  # 최신 방식은 이렇습니다!
 from google.oauth2 import service_account
 from googleapiclient.discovery import build
 from googleapiclient.http import MediaIoBaseUpload
