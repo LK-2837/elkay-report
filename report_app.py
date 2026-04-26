@@ -16,7 +16,7 @@ st.set_page_config(page_title="엘케이어학원 학습 리포트", layout="cen
 FOLDER_ID = "1bMHs-3Ak27JU_ADF9_UVknkHjCEtumR2"
 HISTORY_FILE = "student_history.json"
 
-# 2. AI 클라이언트 설정 (표준 안정화 버전)
+# 2. AI 클라이언트 설정
 if "gemini_api_key" in st.secrets:
     client = genai.Client(api_key=st.secrets["gemini_api_key"])
 else:
@@ -37,13 +37,18 @@ def save_history(history):
 
 def upload_to_google_drive(content, file_name, folder_id):
     try:
-        # Secrets에서 구글 드라이브 인증 정보를 안전하게 가져옴
+        # Secrets에서 JSON 정보를 안전하게 파싱
         info = json.loads(st.secrets["google_drive"]["service_account_json"])
         creds = service_account.Credentials.from_service_account_info(info)
         service = build('drive', 'v3', credentials=creds)
+        
+        # 'ascii' 코덱 에러 방지를 위해 파일 메타데이터 설정
         file_metadata = {'name': file_name, 'parents': [folder_id]}
+        
+        # 내용을 utf-8로 명시적 인코딩
         fh = io.BytesIO(content.encode('utf-8'))
         media = MediaIoBaseUpload(fh, mimetype='text/plain', resumable=True)
+        
         service.files().create(body=file_metadata, media_body=media, fields='id').execute()
         return True, "성공"
     except Exception as e:
@@ -52,7 +57,7 @@ def upload_to_google_drive(content, file_name, folder_id):
 # 3. [데이터 완벽 복구] 상세 커리큘럼 데이터 정의
 UNIT_LIST = [f"<Unit {i:02d}>" for i in range(1, 17)] # 꺽쇠 형식
 
-# [ELT 독해] 교재 리스트
+# [ELT 독해] 교재 리스트 상세 복구
 ELT_BOOKS = [
     "30 Word Reading(1)", "30 Word Reading(2)", "40 Word Reading(1)", "40 Word Reading(2)", 
     "40 Read it(1)", "40 Read it(2)", "40 Read it(3)", "60 Read it(1)", "60 Read it(2)", "60 Read it(3)"
@@ -84,17 +89,16 @@ AZAR_BASIC_FULL_LIST = [
     "7-5 There+Be동사 의문문", "7-6 How Many 의문문", "7-7 장소 전치사", "7-8 위치 전치사", "7-9 Would Like", "7-10 Would Like vs Like"
 ]
 
-# [라이팅 - OK 시리즈 및 트레이닝북 전 시리즈 상세 복구]
+# [라이팅 - OK 시리즈 및 트레이닝북 전체 상세 복구]
 WRITING_DATA = {
     "OK Writing 1": ["Vocab", "Sentence 1~6", "Part 1. 전치사", "Part 2. 진행형", "Part 3. 부정문", "Part 4. and/because", "Part 5. 명령문", "Story 1~3"],
     "OK Writing 2": ["Vocab", "Sentence 1~6", "Part 1. 소유격", "Part 2. There is/are", "Part 3. but/because", "Part 4. 대상 2개", "Part 5. 의문문", "Part 6. look+형용사", "Part 7. don't", "Story 1~3"],
     "OK Writing 3": ["Vocab", "Sentence 1~9", "Part 1. of", "Part 2. to부정사", "Part 3. can", "Part 4. 비인칭", "Part 5. Let's", "Part 6. 3인칭단수", "Part 7. doesn't", "Story 1~3"],
-    "OK Writing 4": ["Vocab", "Sentence 1~7", "Part 1. will", "Part 2. must", "Part 3. to부정사", "Part 4. that절", "Part 5. Do", "Part 6. 의문사", "Story 1~2"],
-    "OK Writing 5": ["Vocab", "Sentence 1~9", "Part 1. 명령문", "Part 2. 빈도부사", "Part 3. Does", "Part 4. to부정사", "Part 5. 원급", "Part 6. 비교급", "Part 7. 최상급", "Story 1~2"],
-    "OK Writing 6": ["Vocab", "Sentence 1~8", "Part 1. 과거", "Part 2. have to", "Part 3. Did", "Part 4. didn't", "Part 5. 동명사주어", "Part 6. 의문사구", "Part 7. 접속사", "Story 1"],
-    "OK Writing 7": ["Vocab", "Sentence 1~12", "Part 1. 동명사목적어", "Part 2. 가주어 it", "Part 3. 형용사보어", "Part 4. 재귀대명사", "Part 5. 의문사구", "Part 6. should", "Part 7. 지각동사", "Story 1~3"],
-    "Bridge Writing Starter": ["Vocab", "Sentence 1~3", "Part 1. 복수", "Part 2. 소유격", "Part 3. 진행형", "Part 4. but", "Part 5. 명령문", "Story 1-1~3-3"],
-    "Bridge Writing 1~3": ["Vocab", "Sentence 1~6", "Part 1~6", "Story 1-1~3-4"],
+    "OK Writing 4": ["Vocab", "Sentence 1~7", "Part 1~6", "Story 1~2"],
+    "OK Writing 5": ["Vocab", "Sentence 1~9", "Part 1~7", "Story 1~2"],
+    "OK Writing 6": ["Vocab", "Sentence 1~8", "Part 1~7", "Story 1"],
+    "OK Writing 7": ["Vocab", "Sentence 1~12", "Part 1~7", "Story 1~3"],
+    "Bridge Writing 시리즈": ["Vocab", "Sentence 1~6", "Part 1~6", "Story"],
     "Training for Reading S1": ["Vocabulary", "Training 1. a/an/the+명사", "Training 2. 복수명사", "Training 3. 형용사+명사", "Training 4. 전치사+명사 (1)", "Training 5. 전치사+명사 (2)", "Training 6. 전치사+명사 (3)", "Training 7. 주인공+동작 (1)", "Training 8. 주인공+동작 (2)", "Training 9. 주인공+동작 (3)", "Training 10. 주인공+동작+대상 (1)", "Training 11. 주인공+동작+대상 (2)"],
     "Training for Reading S2": ["Vocabulary", "Training 1. 주인공+be+명사 (1)", "Training 2. 주인공+be+명사 (2)", "Training 3. 주인공+be+형용사", "Training 4. 주인공+be+명사/형용사 (1)", "Training 5. 주인공+be+명사/형용사 (2)", "Training 6. 주인공+be+명사/형용사 (3)", "Training 7. 주인공+be+전치사+명사 (1)", "Training 8. 주인공+be+전치사+명사 (2)", "Training 9. 주인공+be+전치사+명사 (3)", "Training 10. 주인공+be+명사/형용사/전치사 (Review)", "Training 11. 명령문"],
     "Training for Reading S3": ["Vocabulary", "Training 1. This/That+is+단수명사", "Training 2. This/That+is+소유격+명사 (1)", "Training 3. This/That+is+소유격+명사 (2)", "Training 4. 주인공과 대상이 ‘소유격+명사’", "Training 5. 주인공+동작+전치사+명사", "Training 6. 주인공+동작+대상+전치사+명사", "Training 7. 명령문: 동작+(대상)+전치사+명사", "Training 8. 주인공+be+~ing+(대상)", "Training 9. 주인공+be+~ing+(대상)+전치사+명사", "Story 1-1", "Story 1-2", "Story 1-3", "Story 2", "Story 3"],
@@ -109,6 +113,7 @@ history_data = load_history()
 if st.session_state.page == 'input':
     st.title("🍎 엘케이어학원 학습 리포트") 
 
+    # [과거 기록 불러오기]
     with st.expander("🔍 학생 과거 정보 불러오기", expanded=False):
         all_st = sorted(list(history_data.keys()))
         search = st.selectbox("학생 선택", ["직접 입력"] + all_st)
@@ -140,10 +145,17 @@ if st.session_state.page == 'input':
     # 3. 주교재 및 수업 상세 (상세 목록 복구)
     st.subheader("📚 3. 주교재 및 수업 상세")
     
-    # [ELT 및 독해]
+    # [ELT 독해 상세 복구]
     elt_book = st.selectbox("ELT 독해 교재", ["선택 안 함"] + ELT_BOOKS)
+    elt_unit = "선택 안 함"
+    if elt_book != "선택 안 함":
+        elt_unit = st.selectbox("└ ELT Unit 선택", UNIT_LIST)
+
+    # [독해]
     r_book = st.selectbox("독해 교재", ["선택 안 함"] + READING_BOOKS)
-    r_unit = st.selectbox("독해/ELT Unit", ["선택 안 함"] + UNIT_LIST)
+    r_unit = "선택 안 함"
+    if r_book != "선택 안 함":
+        r_unit = st.selectbox("└ 독해 Unit 선택", UNIT_LIST)
 
     # [문법] Azar 통합 리스트
     g_book = st.selectbox("문법 교재", ["선택 안 함", "Azar Basic (Red)", "기타"])
@@ -157,11 +169,11 @@ if st.session_state.page == 'input':
     w_book = st.selectbox("라이팅 교재", ["선택 안 함"] + list(WRITING_DATA.keys()))
     w_ls = "선택 안 함"
     if w_book != "선택 안 함":
-        w_ls = st.selectbox("└ 라이팅 세부 단원", WRITING_DATA[w_book])
+        w_ls = st.selectbox("└ 라이팅 세부 단원 선택", WRITING_DATA[w_book])
 
     st.divider()
 
-    # 4. AI 과제 분석 (404 오류 해결 방식)
+    # 4. AI 과제 분석 (안정화 호출)
     st.subheader("📸 4. AI 과제 분석")
     up_file = st.file_uploader("과제 사진 업로드", type=['jpg', 'png'])
     domain = st.selectbox("분석 영역", ["선택 안 함", "문법", "어휘", "독해", "라이팅"])
@@ -172,7 +184,7 @@ if st.session_state.page == 'input':
                 try:
                     img = Image.open(up_file)
                     img.thumbnail((800, 800))
-                    prompt = f"엘케이어학원 선생님으로서 이 {domain} 과제 사진을 보고 학생의 상태를 한국어로 2~3문장 분석해줘."
+                    prompt = f"엘케이어학원 선생님으로서 이 {domain} 과제 사진을 보고 학생의 성취도를 한국어로 2~3문장 분석해줘."
                     res = client.models.generate_content(model="gemini-1.5-flash", contents=[prompt, img])
                     st.session_state.ai_res = res.text
                     st.success("분석 완료!")
@@ -182,7 +194,7 @@ if st.session_state.page == 'input':
 
     st.divider()
 
-    # 5. 총평
+    # 5. 선생님 총평
     st.subheader("✍️ 5. 선생님 총평")
     content = st.text_area("상세 피드백 (태도 등)")
     hw_status = st.selectbox("과제 수행도", ["매우 우수", "우수", "보통", "미흡"])
@@ -194,7 +206,7 @@ if st.session_state.page == 'input':
         target_info = f"{grade} {display_class}{name} 학생"
         
         items = []
-        if elt_book != "선택 안 함": items.append(f"• ELT독해: {elt_book} [{r_unit}]")
+        if elt_book != "선택 안 함": items.append(f"• ELT독해: {elt_book} [{elt_unit}]")
         if r_book != "선택 안 함": items.append(f"• 독해: {r_book} [{r_unit}]")
         if g_book != "선택 안 함": items.append(f"• 문법: {g_book} [{g_sub}]")
         if w_book != "선택 안 함": items.append(f"• 라이팅: {w_book} [{w_ls}]")
