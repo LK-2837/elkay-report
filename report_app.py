@@ -16,7 +16,7 @@ else:
 
 # --- [상세 커리큘럼 데이터 정의] ---
 
-# [데이터 보강] Phonics 상세 유닛 데이터 (이미지 분석 결과)
+# 파닉스 상세 데이터 (이미지 분석 결과 반영)
 PHONICS_DATA = {
     "Phonics 1": [f"<Unit {i:02d}>" for i in range(1, 11)],
     "Phonics 2": [
@@ -67,10 +67,10 @@ PHONICS_DATA = {
     ]
 }
 
-# 기존 데이터들 유지
 V_BOOKS_LIST = ["능률 보카 기본 400", "능률 보카 필수 500", "능률 보카 교육청 900", "보카클리어 중학기본", "보카클리어 중학실력", "보카익스프레스", "기타"]
 ELT_BOOKS = ["30 Word Reading(1)", "30 Word Reading(2)", "40 Word Reading(1)", "40 Word Reading(2)", "40 Read it(1)", "40 Read it(2)", "40 Read it(3)", "60 Read it(1)", "60 Read it(2)", "60 Read it(3)"]
-READING_BOOKS = ["리딩튜터 스타터(1)", "리딩튜터 스타터(2)", "리딩튜터 스타터(3)", "리딩튜터 주니어(1)", "리딩튜터 주니어(2)", "리딩튜터 주니어(3)", "리딩튜터 주니어(4)", "수능토픽(레벨1)", "수능토픽(레벨2)", "수능토픽(레벨3)", "English Newspaper_Kids", "English Newspaper_Kinder", "자체 독해 자료"]
+# [수정] 영자신문이 별도 섹션으로 나갔으므로 기존 목록에서 제거
+READING_BOOKS_LIST = ["리딩튜터 스타터(1)", "리딩튜터 스타터(2)", "리딩튜터 스타터(3)", "리딩튜터 주니어(1)", "리딩튜터 주니어(2)", "리딩튜터 주니어(3)", "리딩튜터 주니어(4)", "수능토픽(레벨1)", "수능토픽(레벨2)", "수능토픽(레벨3)", "자체 독해 자료"]
 AZAR_BASIC_FULL_LIST = ["1-1 단수 인칭대명사+Be동사", "1-2 복수 인칭대명사+Be동사", "1-3 단수 명사+Be동사", "1-4 복수 명사+Be동사", "1-5 인칭대명사+Be동사 축약", "1-6 Be동사 부정문", "1-7 Be동사+형용사", "1-8 Be동사+장소", "1-9 Be동사 구조 요약", "2-1 This/That", "2-2 These/Those", "2-3 Be동사 Yes/No 의문문", "2-4 의문문 대답", "2-5 Where 의문문", "2-6 Have/Has", "2-7 소유격 인칭대명사", "2-8 What/Who 의문문", "3-1 현재시제 형태/의미", "3-2 빈도부사", "3-3 빈도부사 위치", "3-4 3인칭 단수 -es", "3-5 3인칭 단수 -y", "3-6 Has, Does, Goes", "3-7 Like/Want/Need/Would Like", "3-8 현재시제 부정문", "3-9 Yes/No 의문문", "3-10 Where/What 의문문", "3-11 When/What Time 의문문", "4-1 현재진행형 Be+-ing", "4-2 동사의 -ing", "4-3 현재진행 부정문", "4-4 현재진행 의문문", "4-5 현재 vs 진행", "4-6 상태동사", "4-7 See/Look/Watch/Hear/Listen", "4-8 Think About vs That", "4-9 명령문", "5-1 명사 단수/복수", "5-2 불규칙 복수형", "5-3 형용사의 쓰임", "5-4 명사: 주어/목적어", "5-5 주격/목적격 대명사", "5-6 전치사+목적격 대명사", "5-7 소유형용사/대명사", "5-8 명사 소유격", "5-9 Whose 의문문", "5-10 소유격 불규칙 복수", "6-1 셀 수 있는/없는 명사", "6-2 A vs An", "6-3 A/An vs Some", "6-4 물질명사 수량", "6-5 Many/Much/Few/Little", "6-6 정관사 The", "6-7 관사 미사용", "6-8 Some/Any", "7-1 비인칭주어 It(시간)", "7-2 시간 전치사", "7-3 비인칭주어 It(날씨)", "7-4 There+Be동사", "7-5 There+Be동사 의문문", "7-6 How Many 의문문", "7-7 장소 전치사", "7-8 위치 전치사", "7-9 Would Like", "7-10 Would Like vs Like"]
 WRITING_DATA = {
     "OK Writing 1": ["Vocab", "Sentence 1~6", "Part 1. 전치사", "Part 2. 진행형", "Part 3. 부정문", "Part 4. and/because", "Part 5. 명령문", "Story 1-1~3-4"],
@@ -148,10 +148,10 @@ if st.session_state.page == 'input':
 
     st.divider()
 
-    # 3. 주교재 및 수업 상세 (Phonics 섹션 상세 보강)
+    # 3. 주교재 및 수업 상세
     st.subheader("📚 3. 주교재 및 수업 상세")
     
-    # [Phonics 상세 복구]
+    # Phonics 섹션
     p_books_options = ["선택 안 함"] + list(PHONICS_DATA.keys())
     p_def = p_books_options.index(student_data['파닉스교재']) if student_data is not None and str(student_data['파닉스교재']) in p_books_options else 0
     p_book = st.selectbox("파닉스 교재", p_books_options, index=p_def)
@@ -165,8 +165,14 @@ if st.session_state.page == 'input':
     elt_book = st.selectbox("ELT 독해 교재", elt_books, index=elt_def)
     elt_unit = st.text_input("└ ELT Unit 입력", placeholder="예: <Unit 01>")
 
+    # [신규 추가] 영자신문 섹션
+    ns_options = ["선택 안 함", "<Kinder>", "<Kids>"]
+    # 엑셀 불러오기 필드명이 '영자신문'일 경우 대응
+    ns_def = ns_options.index(student_data['영자신문']) if student_data is not None and str(student_data['영자신문']) in ns_options else 0
+    news_paper = st.selectbox("영자신문 선택", ns_options, index=ns_def)
+
     # 일반 독해
-    r_books = ["선택 안 함"] + READING_BOOKS
+    r_books = ["선택 안 함"] + READING_BOOKS_LIST
     r_def = r_books.index(student_data['독해교재']) if student_data is not None and str(student_data['독해교재']) in r_books else 0
     r_book = st.selectbox("독해 교재", r_books, index=r_def)
     r_unit = st.text_input("└ 독해 Unit 입력", placeholder="예: <Unit 01>")
@@ -229,6 +235,7 @@ if st.session_state.page == 'input':
             items = []
             if p_book != "선택 안 함": items.append(f"• 파닉스: {p_book} [{p_unit}]")
             if elt_book != "선택 안 함": items.append(f"• ELT독해: {elt_book} [{elt_unit}]")
+            if news_paper != "선택 안 함": items.append(f"• 영자신문: {news_paper}")
             if r_book != "선택 안 함": items.append(f"• 독해: {r_book} [{r_unit}]")
             if g_book != "선택 안 함": items.append(f"• 문법: {g_book} [{g_sub}]")
             if w_book != "선택 안 함": items.append(f"• 라이팅: {w_book} [{w_ls}]")
