@@ -16,7 +16,7 @@ else:
 
 # --- [상세 커리큘럼 데이터 정의 - 절대 요약 금지] ---
 
-# [문법] Azar Basic (Red) 전체 세부 항목 복구 (1-1 ~ 7-10)
+# [문법] Azar Basic (Red) 전체 세부 항목 (1-1 ~ 7-10)
 AZAR_BASIC_FULL_LIST = [
     "1-1 단수 인칭대명사+Be동사", "1-2 복수 인칭대명사+Be동사", "1-3 단수 명사+Be동사", "1-4 복수 명사+Be동사", 
     "1-5 인칭대명사+Be동사 축약", "1-6 Be동사 부정문", "1-7 Be동사+형용사", "1-8 Be동사+장소", "1-9 Be동사 구조 요약",
@@ -28,16 +28,23 @@ AZAR_BASIC_FULL_LIST = [
     "4-1 현재진행형 Be+-ing", "4-2 동사의 -ing", "4-3 현재진행 부정문", "4-4 현재진행 의문문", 
     "4-5 현재 vs 진행", "4-6 상태동사", "4-7 See/Look/Watch/Hear/Listen", "4-8 Think About vs That", "4-9 명령문",
     "5-1 명사 단수/복수", "5-2 불규칙 복수형", "5-3 형용사의 쓰임", "5-4 명사: 주어/목적어", 
-    "5-5 주격/목적격 대명사", "5-6 전치사+목적격 대명사", "5-7 소유형용사/대명사", "5-8 명사 소유격", "5-9 Whose 의문문", "5-10 소유격 불규칙 복수",
+    "5-5 주격/목적격 대명사", "5-6 전치사+목격격 대명사", "5-7 소유형용사/대명사", "5-8 명사 소유격", "5-9 Whose 의문문", "5-10 소유격 불규칙 복수",
     "6-1 셀 수 있는/없는 명사", "6-2 A vs An", "6-3 A/An vs Some", "6-4 물질명사 수량", 
     "6-5 Many/Much/Few/Little", "6-6 정관사 The", "6-7 관사 미사용", "6-8 Some/Any",
     "7-1 비인칭주어 It(시간)", "7-2 시간 전치사", "7-3 비인칭주어 It(날씨)", "7-4 There+Be동사", 
     "7-5 There+Be동사 의문문", "7-6 How Many 의문문", "7-7 장소 전치사", "7-8 위치 전치사", "7-9 Would Like", "7-10 Would Like vs Like"
 ]
 
-# [라이팅] 전 시리즈 상세 항목 복구 및 "스피킹&라이팅" 추가
+# [라이팅] 상세 항목 복구 및 "스피킹&라이팅" 추가
 WRITING_DATA = {
-    "Basic Structure": [f"Unit {i}" for i in range(1, 13)] + ["스피킹&라이팅"],
+    # Basic Structure 상세 항목 복구 완료
+    "Basic Structure": [
+        "Unit 1. Nouns & Articles", "Unit 2. Pronouns", "Unit 3. Be-verbs (Present)", 
+        "Unit 4. General Verbs (Present)", "Unit 5. Present Continuous", "Unit 6. Be-verbs (Past)", 
+        "Unit 7. General Verbs (Past)", "Unit 8. Auxiliary Verbs", "Unit 9. Adjectives & Adverbs", 
+        "Unit 10. Prepositions", "Unit 11. Interrogatives", "Unit 12. Sentence Structures", 
+        "스피킹&라이팅"
+    ],
     "Bridge Writing 1": ["Vocabulary", "Sentence 1~5", "Part 1. 관사", "Part 2. 전치사", "Part 3. but/because", "Part 4. 부정문", "Part 5. 의문문", "Story 1-1~2-5", "스피킹&라이팅"],
     "Bridge Writing 2": ["Vocabulary", "Sentence 1~6", "Part 1. 의문사", "Part 2. 3인칭", "Part 3. 형용사보어", "Part 4. will", "Part 5. 's", "Part 6. Please", "Story 1-1~3-4", "스피킹&라이팅"],
     "Bridge Writing 3": ["Vocabulary", "Sentence 1~6", "Part 1. There", "Part 2. 소유격", "Part 3. 의문사", "Part 4. Don't", "Part 5. can", "Part 6. to", "Story 1-1~3-4", "스피킹&라이팅"],
@@ -105,7 +112,7 @@ if st.session_state.page == 'input':
         uploaded_excel = st.file_uploader("xlsx 파일을 업로드하세요", type=['xlsx'])
         if uploaded_excel:
             df = load_excel_data(uploaded_excel)
-            if df is not None: st.success("새 파일을 읽었습니다!")
+            if df is not None: st.success("새 데이터를 읽었습니다!")
 
     if df is not None:
         sel_student = st.selectbox("학생 선택", ["선택 안 함"] + list(df['이름'].unique()))
@@ -180,7 +187,7 @@ if st.session_state.page == 'input':
     g_sub = st.selectbox("└ Azar 상세 항목", AZAR_BASIC_FULL_LIST) if g_book == "Azar Basic (Red)" else st.text_input("└ 단원명 직접 입력")
     g_hw = st.checkbox("과제X (문법)", key="g_hw")
 
-    # [라이팅]
+    # [라이팅] - Basic Structure 복구 완료
     wr_books = ["선택 안 함"] + list(WRITING_DATA.keys())
     w_book = st.selectbox("라이팅 교재", wr_books, index=find_index(wr_books, get_safe("라이팅교재")))
     w_ls = st.selectbox("└ 라이팅 세부 단원", WRITING_DATA[w_book]) if w_book != "선택 안 함" else "선택 안 함"
@@ -188,14 +195,14 @@ if st.session_state.page == 'input':
 
     st.divider()
 
-    # 4. 분석 & 5. 총평
+    # 4. 과제 분석 & 5. 총평
     up_file = st.file_uploader("과제 사진 업로드", type=['jpg', 'png'])
     domain = st.selectbox("분석 영역", ["선택 안 함", "문법", "어휘", "독해", "라이팅"])
     if st.button("🤖 과제 분석 시작") and up_file and domain != "선택 안 함":
         with st.spinner("AI 분석 중..."):
             try:
                 img = Image.open(up_file); img.thumbnail((800, 800))
-                res = client.models.generate_content(model="gemini-1.5-flash", contents=[f"성취도 분석해줘", img])
+                res = client.models.generate_content(model="gemini-1.5-flash", contents=[f"엘케이어학원 선생님으로서 학생의 {domain} 성취도 분석", img])
                 st.session_state.ai_res = res.text
             except Exception as e: st.error(f"오류: {e}")
     ai_fb = st.text_area("분석 결과 확인", value=st.session_state.ai_res, height=120)
