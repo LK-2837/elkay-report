@@ -8,28 +8,15 @@ from google import genai
 # 1. 페이지 설정
 st.set_page_config(page_title="엘케이어학원 학습 리포트", layout="centered")
 
-# 2. 클라이언트 설정 (과제 정밀 분석용)
+# 2. AI 클라이언트 설정 (과제 정밀 분석용)
 if "gemini_api_key" in st.secrets:
     client = genai.Client(api_key=st.secrets["gemini_api_key"])
 else:
     st.error("Secrets에 'gemini_api_key'를 등록해 주세요.")
 
-# --- [상세 커리큘럼 데이터 정의] ---
+# --- [전체 커리큘럼 데이터 정의] ---
 
-# [수정] 어휘 교재 목록 업데이트
-V_BOOKS_LIST = [
-    "능률 보카 기본 400", 
-    "능률 보카 필수 500", 
-    "[개정]교육청 초등어휘 900", 
-    "보카클리어 중학기본", 
-    "보카클리어 중학실력", 
-    "보카클리어 중학완성", # 신규 추가
-    "워드마스터 고등기본", # 신규 추가
-    "보카익스프레스[중등]", 
-    "기타"
-]
-
-# Phonics 상세 데이터 (이미지 분석 결과 반영)
+# Phonics 상세 유닛 및 예문 데이터 (Lv2~Lv5 이미지 분석 반영)
 PHONICS_DATA = {
     "Phonics 1": [f"<Unit {i:02d}>" for i in range(1, 11)],
     "Phonics 2": [
@@ -69,7 +56,7 @@ PHONICS_DATA = {
     "Phonics 5": [
         "<Unit 01> (tail, snail, train, chain, play, tray, clay, spray) / He plays with clay. / All chains are on the tray. / All snails are on the train.",
         "<Unit 02> (bee, seed, tree, tea, meat, leaf, key, honey, money) / The key is old. / The bee paints a money tree. / A leaf is in the honey tea.",
-        "<Unit 03> (die, pie, tie, find, kind, blind, Birdie, fight, night) / He is very kind. / She sighs at night. / They fight for the pie.",
+        "<Unit 03> (die, pie, tie, find, kind, blind, sigh, fight, night) / He is very kind. / She sighs at night. / They fight for the pie.",
         "<Unit 04> (boat, coat, soap, road, grow, blow, crow, snow) / A crow blows the soap boat. / A plant grows in the snow. / A coat is on the road.",
         "<Unit 05> (new, chew, stew, blue, clue, glue, room, spoon, moon) / He finds the clue. / The blue glue is on the spoon. / The goat chews my new tie.",
         "<Unit 06> (paw, draw, straw, head, bread, thread, book, foot, look) / Draw the paw now. / Draw the head again. / Look at the open book now.",
@@ -80,6 +67,7 @@ PHONICS_DATA = {
     ]
 }
 
+V_BOOKS_LIST = ["능률 보카 기본 400", "능률 보카 필수 500", "[개정]교육청 초등어휘 900", "보카클리어 중학기본", "보카클리어 중학실력", "보카클리어 중학완성", "워드마스터 고등기본", "보카익스프레스[중등]", "기타"]
 ELT_BOOKS = ["30 Word Reading(1)", "30 Word Reading(2)", "40 Word Reading(1)", "40 Word Reading(2)", "40 Read it(1)", "40 Read it(2)", "40 Read it(3)", "60 Read it(1)", "60 Read it(2)", "60 Read it(3)"]
 READING_BOOKS_LIST = ["리딩튜터 스타터(1)", "리딩튜터 스타터(2)", "리딩튜터 스타터(3)", "리딩튜터 주니어(1)", "리딩튜터 주니어(2)", "리딩튜터 주니어(3)", "리딩튜터 주니어(4)", "수능토픽(레벨1)", "수능토픽(레벨2)", "수능토픽(레벨3)", "자체 독해 자료"]
 AZAR_BASIC_FULL_LIST = ["1-1 단수 인칭대명사+Be동사", "1-2 복수 인칭대명사+Be동사", "1-3 단수 명사+Be동사", "1-4 복수 명사+Be동사", "1-5 인칭대명사+Be동사 축약", "1-6 Be동사 부정문", "1-7 Be동사+형용사", "1-8 Be동사+장소", "1-9 Be동사 구조 요약", "2-1 This/That", "2-2 These/Those", "2-3 Be동사 Yes/No 의문문", "2-4 의문문 대답", "2-5 Where 의문문", "2-6 Have/Has", "2-7 소유격 인칭대명사", "2-8 What/Who 의문문", "3-1 현재시제 형태/의미", "3-2 빈도부사", "3-3 빈도부사 위치", "3-4 3인칭 단수 -es", "3-5 3인칭 단수 -y", "3-6 Has, Does, Goes", "3-7 Like/Want/Need/Would Like", "3-8 현재시제 부정문", "3-9 Yes/No 의문문", "3-10 Where/What 의문문", "3-11 When/What Time 의문문", "4-1 현재진행형 Be+-ing", "4-2 동사의 -ing", "4-3 현재진행 부정문", "4-4 현재진행 의문문", "4-5 현재 vs 진행", "4-6 상태동사", "4-7 See/Look/Watch/Hear/Listen", "4-8 Think About vs That", "4-9 명령문", "5-1 명사 단수/복수", "5-2 불규칙 복수형", "5-3 형용사의 쓰임", "5-4 명사: 주어/목적어", "5-5 주격/목적격 대명사", "5-6 전치사+목적격 대명사", "5-7 소유형용사/대명사", "5-8 명사 소유격", "5-9 Whose 의문문", "5-10 소유격 불규칙 복수", "6-1 셀 수 있는/없는 명사", "6-2 A vs An", "6-3 A/An vs Some", "6-4 물질명사 수량", "6-5 Many/Much/Few/Little", "6-6 정관사 The", "6-7 관사 미사용", "6-8 Some/Any", "7-1 비인칭주어 It(시간)", "7-2 시간 전치사", "7-3 비인칭주어 It(날씨)", "7-4 There+Be동사", "7-5 There+Be동사 의문문", "7-6 How Many 의문문", "7-7 장소 전치사", "7-8 위치 전치사", "7-9 Would Like", "7-10 Would Like vs Like"]
@@ -108,16 +96,30 @@ if "ai_res" not in st.session_state: st.session_state.ai_res = ""
 if st.session_state.page == 'input':
     st.title("🍎 엘케이어학원 학습 리포트") 
 
+    # [수정] 엑셀 자동 감지 로직 보강
     with st.expander("📂 학생 교재 목록(엑셀) 불러오기", expanded=False):
-        uploaded_excel = st.file_uploader("항목명이 세로(A열)로 된 엑셀 파일을 업로드하세요", type=['xlsx'])
+        uploaded_excel = st.file_uploader("가로/세로 모든 형식의 엑셀 파일을 지원합니다", type=['xlsx'])
         student_data = None
         if uploaded_excel:
-            df_raw = pd.read_excel(uploaded_excel, index_col=0) 
-            df = df_raw.T.reset_index() 
-            st.success("세로형 엑셀 파일을 성공적으로 불러왔습니다!")
-            sel_student = st.selectbox("학생 선택", ["선택 안 함"] + list(df['이름'].unique()))
-            if sel_student != "선택 안 함":
-                student_data = df[df['이름'] == sel_student].iloc[0]
+            try:
+                # 1. 일단 표준 형식(가로)으로 읽기
+                df = pd.read_excel(uploaded_excel)
+                df.columns = [str(c).strip() for c in df.columns] # 공백 제거
+                
+                # 2. '이름' 컬럼이 없으면 세로 형식으로 뒤집기
+                if '이름' not in df.columns:
+                    df = pd.read_excel(uploaded_excel, index_col=0).T.reset_index()
+                    df.columns = [str(c).strip() for c in df.columns] # 공백 재제거
+                
+                if '이름' in df.columns:
+                    st.success("엑셀 데이터를 성공적으로 분석했습니다!")
+                    sel_student = st.selectbox("학생 선택", ["선택 안 함"] + list(df['이름'].unique()))
+                    if sel_student != "선택 안 함":
+                        student_data = df[df['이름'] == sel_student].iloc[0]
+                else:
+                    st.error("엑셀 파일에 '이름' 항목이 보이지 않습니다. 첫 번째 줄(혹은 첫 번째 열)을 확인해 주세요.")
+            except Exception as e:
+                st.error(f"엑셀 분석 오류: {e}")
 
     st.divider()
 
@@ -127,22 +129,21 @@ if st.session_state.page == 'input':
     c1, c2, c3 = st.columns(3)
     
     grade_list = ["초등", "중등", "고등"]
-    grade_def = grade_list.index(student_data['학년']) if student_data is not None and student_data['학년'] in grade_list else 0
+    grade_def = grade_list.index(student_data['학년']) if student_data is not None and str(student_data['학년']) in grade_list else 0
     grade = c1.selectbox("학년", grade_list, index=grade_def)
     
     class_list = ["선택 없음", "Beginner-2시", "Beginner-3시", "Ph1", "Inter 2시", "G-Advanced 2시"]
-    class_def = class_list.index(student_data['반']) if student_data is not None and student_data['반'] in class_list else 0
+    class_def = class_list.index(student_data['반']) if student_data is not None and str(student_data['반']) in class_list else 0
     class_name = c2.selectbox("반 선택", class_list, index=class_def)
     
     name = st.text_input("학생 이름", value=student_data['이름'] if student_data is not None else "", placeholder="이름 입력")
 
     st.divider()
 
-    # 2. 어휘 섹션
+    # 2. 어휘 섹션 (수정된 교재명 반영)
     st.subheader("🅰️ 2. 어휘 (Vocabulary)")
     vc1, vc2 = st.columns([2, 1])
-    # 어휘 교재 자동 선택 (수정된 목록 기반)
-    v_def = V_BOOKS_LIST.index(student_data['어휘교재']) if student_data is not None and student_data['어휘교재'] in V_BOOKS_LIST else 0
+    v_def = V_BOOKS_LIST.index(student_data['어휘교재']) if student_data is not None and str(student_data['어휘교재']) in V_BOOKS_LIST else 0
     v_book = vc1.selectbox("어휘 교재", V_BOOKS_LIST, index=v_def)
     v_unit = vc2.text_input("어휘 Unit 입력", placeholder="예: <Unit 01>")
     
@@ -160,10 +161,10 @@ if st.session_state.page == 'input':
 
     st.divider()
 
-    # 3. 주교재 및 수업 상세
+    # 3. 주교재 및 수업 상세 (영자신문 섹션 분리 유지)
     st.subheader("📚 3. 주교재 및 수업 상세")
     
-    # Phonics 섹션
+    # Phonics
     p_books_options = ["선택 안 함"] + list(PHONICS_DATA.keys())
     p_def = p_books_options.index(student_data['파닉스교재']) if student_data is not None and str(student_data['파닉스교재']) in p_books_options else 0
     p_book = st.selectbox("파닉스 교재", p_books_options, index=p_def)
@@ -177,7 +178,7 @@ if st.session_state.page == 'input':
     elt_book = st.selectbox("ELT 독해 교재", elt_books, index=elt_def)
     elt_unit = st.text_input("└ ELT Unit 입력", placeholder="예: <Unit 01>")
 
-    # 영자신문 섹션
+    # 영자신문 섹션 (Kinder/Kids 선택)
     ns_options = ["선택 안 함", "<Kinder>", "<Kids>"]
     ns_def = ns_options.index(student_data['영자신문']) if student_data is not None and str(student_data['영자신문']) in ns_options else 0
     news_paper = st.selectbox("영자신문 선택", ns_options, index=ns_def)
@@ -215,7 +216,7 @@ if st.session_state.page == 'input':
     
     if st.button("🤖 과제 분석 시작"):
         if up_file and domain != "선택 안 함":
-            with st.spinner("성취도 분석 중..."):
+            with st.spinner("AI 분석 중..."):
                 try:
                     img = Image.open(up_file)
                     img.thumbnail((800, 800))
