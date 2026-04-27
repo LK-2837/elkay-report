@@ -8,13 +8,15 @@ from google import genai
 # 1. 페이지 설정
 st.set_page_config(page_title="엘케이어학원 학습 리포트", layout="centered")
 
-# 2. 클라이언트 설정
+# 2. 클라이언트 설정 (과제 정밀 분석용)
 if "gemini_api_key" in st.secrets:
     client = genai.Client(api_key=st.secrets["gemini_api_key"])
 else:
     st.error("Secrets에 'gemini_api_key'를 등록해 주세요.")
 
 # --- [상세 커리큘럼 데이터 정의] ---
+
+# Phonics 상세 데이터
 PHONICS_DATA = {
     "Phonics 1": [f"<Unit {i:02d}>" for i in range(1, 11)],
     "Phonics 2": ["<Unit 01> (hat, cat, bat, rat, man, can, pan, van) / A cat has the hat.", "<Unit 02> (map, lap, nap, gap, ham, jam, ram, Sam) / Sam has the jam.", "<Unit 03> (net, jet, vet, wet, bed, red, Ted) / The bed is red.", "<Unit 04> (leg, Meg, keg, pen, men, hen, ten) / The hen is in the keg.", "<Unit 05> (hit, pit, kit, sit, pin, bin, fin, win) / He hits the bin.", "<Unit 06> (zip, dip, lip, rip, pig, big, dig, wig) / The pig is big.", "<Unit 07> (pot, cot, dot, hot, box, fox, ox) / The fox is on the box.", "<Unit 08> (top, mop, hop, pop, dog, log, fog, jog) / I have a mop.", "<Unit 09> (hut, cut, nut, sun, gun, fun, run) / She cuts the nut.", "<Unit 10> (tub, rub, sub, cub, mug, bug, rug, hug) / The bug is on the sub."],
@@ -28,7 +30,11 @@ ELT_BOOKS = ["30 Word Reading(1)", "30 Word Reading(2)", "40 Word Reading(1)", "
 READING_BOOKS_LIST = ["리딩튜터 스타터(1)", "리딩튜터 스타터(2)", "리딩튜터 스타터(3)", "리딩튜터 주니어(1)", "리딩튜터 주니어(2)", "리딩튜터 주니어(3)", "리딩튜터 주니어(4)", "수능토픽(레벨1)", "수능토픽(레벨2)", "수능토픽(레벨3)", "자체 독해 자료"]
 AZAR_BASIC_FULL_LIST = ["1-1 단수 인칭대명사+Be동사", "1-2 복수 인칭대명사+Be동사", "1-3 단수 명사+Be동사", "1-4 복수 명사+Be동사", "1-5 인칭대명사+Be동사 축약", "1-6 Be동사 부정문", "1-7 Be동사+형용사", "1-8 Be동사+장소", "1-9 Be동사 구조 요약", "2-1 This/That", "2-2 These/Those", "2-3 Be동사 Yes/No 의문문", "2-4 의문문 대답", "2-5 Where 의문문", "2-6 Have/Has", "2-7 소유격 인칭대명사", "2-8 What/Who 의문문", "3-1 현재시제 형태/의미", "3-2 빈도부사", "3-3 빈도부사 위치", "3-4 3인칭 단수 -es", "3-5 3인칭 단수 -y", "3-6 Has, Does, Goes", "3-7 Like/Want/Need/Would Like", "3-8 현재시제 부정문", "3-9 Yes/No 의문문", "3-10 Where/What 의문문", "3-11 When/What Time 의문문", "4-1 현재진행형 Be+-ing", "4-2 동사의 -ing", "4-3 현재진행 부정문", "4-4 현재진행 의문문", "4-5 현재 vs 진행", "4-6 상태동사", "4-7 See/Look/Watch/Hear/Listen", "4-8 Think About vs That", "4-9 명령문", "5-1 명사 단수/복수", "5-2 불규칙 복수형", "5-3 형용사의 쓰임", "5-4 명사: 주어/목적어", "5-5 주격/목적격 대명사", "5-6 전치사+목적격 대명사", "5-7 소유형용사/대명사", "5-8 명사 소유격", "5-9 Whose 의문문", "5-10 소유격 불규칙 복수", "6-1 셀 수 있는/없는 명사", "6-2 A vs An", "6-3 A/An vs Some", "6-4 물질명사 수량", "6-5 Many/Much/Few/Little", "6-6 정관사 The", "6-7 관사 미사용", "6-8 Some/Any", "7-1 비인칭주어 It(시간)", "7-2 시간 전치사", "7-3 비인칭주어 It(날씨)", "7-4 There+Be동사", "7-5 There+Be동사 의문문", "7-6 How Many 의문문", "7-7 장소 전치사", "7-8 위치 전치사", "7-9 Would Like", "7-10 Would Like vs Like"]
 
+# [라이팅] Basic Structure 추가 및 기존 데이터 통합
 WRITING_DATA = {
+    "Basic Structure 1": [f"Unit {i}" for i in range(1, 13)], # Basic Structure 1권 추가
+    "Basic Structure 2": [f"Unit {i}" for i in range(1, 13)], # Basic Structure 2권 추가
+    "Basic Structure 3": [f"Unit {i}" for i in range(1, 13)], # Basic Structure 3권 추가
     "OK Writing 1": ["Vocab", "Sentence 1~6", "Part 1. 전치사", "Part 2. 진행형", "Part 3. 부정문", "Part 4. and/because", "Part 5. 명령문", "Story 1-1~3-4"],
     "OK Writing 2": ["Vocab", "Sentence 1~6", "Part 1. 소유격", "Part 2. There is/are", "Part 3. but/because", "Part 4. 대상 2개", "Part 5. 의문문", "Part 6. look+형용사", "Part 7. don't", "Story 1-1~3-4"],
     "OK Writing 3": ["Vocab", "Sentence 1~9", "Part 1. of", "Part 2. to부정사", "Part 3. can", "Part 4. 비인칭", "Part 5. Let's", "Part 6. 3인칭단수", "Part 7. doesn't", "Story 1-1~3-5"],
@@ -40,10 +46,10 @@ WRITING_DATA = {
     "Bridge Writing 1": ["Vocabulary", "Sentence 1~5", "Part 1. 관사", "Part 2. 전치사", "Part 3. but/because", "Part 4. 부정문", "Part 5. 의문문", "Story 1-1~2-5"],
     "Bridge Writing 2": ["Vocabulary", "Sentence 1~6", "Part 1. 의문사", "Part 2. 3인칭", "Part 3. 형용사보어", "Part 4. will", "Part 5. 's", "Part 6. Please", "Story 1-1~3-4"],
     "Bridge Writing 3": ["Vocabulary", "Sentence 1~6", "Part 1. There", "Part 2. 소유격", "Part 3. 의문사", "Part 4. Don't", "Part 5. can", "Part 6. to", "Story 1-1~3-4"],
-    "Training for Reading S1": ["Vocabulary", "Training 1. a/an/the+명사", "Training 2. 복수명사", "Training 3. 형용사+명사", "Training 4. 전치사+명사 (1)", "Training 5. 전치사+명사 (2)", "Training 6. 전치사+명사 (3)", "Training 7. 주인공+동작 (1)", "Training 8. 주인공+동작 (2)", "Training 9. 주인공+동작 (3)", "Training 10. 주인공+동작+대상 (1)", "Training 11. 주인공+동작+대상 (2)"],
-    "Training for Reading S2": ["Vocabulary", "Training 1. 주인공+be+명사 (1)", "Training 2. 주인공+be+명사 (2)", "Training 3. 주인공+be+형용사", "Training 4. 주인공+be+명사/형용사 (1)", "Training 5. 주인공+be+명사/형용사 (2)", "Training 6. 주인공+be+명사/형용사 (3)", "Training 7. 주인공+be+전치사+명사 (1)", "Training 8. 주인공+be+전치사+명사 (2)", "Training 9. 주인공+be+전치사+명사 (3)", "Training 10. 주인공+be+명사/형용사/전치사 (Review)", "Training 11. 명령문"],
-    "Training for Reading S3": ["Vocabulary", "Training 1. This/That+is+단수명사", "Training 2. This/That+is+소유격+명사 (1)", "Training 3. This/That+is+소유격+명사 (2)", "Training 4. 주인공과 대상이 ‘소유격+명사’", "Training 5. 주인공+동작+전치사+명사", "Training 6. 주인공+동작+대상+전치사+명사", "Training 7. 명령문: 동작+(대상)+전치사+명사", "Training 8. 주인공+be+~ing+(대상)", "Training 9. 주인공+be+~ing+(대상)+전치사+명사", "Story 1-1", "Story 1-2", "Story 1-3", "Story 2", "Story 3"],
-    "Training for Reading S4": ["Vocabulary", "Training 1. 주인공+동작+대상(대명사)", "Training 2. 명사 and 명사", "Training 3. 형용사 and 형용사", "Training 4. 문장 and 문장", "Training 5. Because 주인공+동작", "Training 6. 주인공+동작+(대상)+부사", "Training 7. 부사+형용사", "Training 8. 부사+부사", "Training 9. 부사의 다양한 위치", "Story 1-1", "Story 1-2", "Story 1-3", "Story 2-1", "Story 2-2"]
+    "Training for Reading S1": ["Vocabulary", "Training 1. a/an/the+명사", "Training 2. 복수명사", "Training 3. 형용사+명사", "Training 4. 전치사+명사", "Training 10. 주인공+동작+대상"],
+    "Training for Reading S2": ["Vocabulary", "Training 1. 주인공+be+명사", "Training 10. 주인공+be+명사/형용사/전치사 (Review)", "Training 11. 명령문"],
+    "Training for Reading S3": ["Vocabulary", "Training 1~4. 소유격+명사", "Story 1-1~3"],
+    "Training for Reading S4": ["Vocabulary", "Training 1~4. 접속사 and/Because", "부사 위치", "Story 1-1~2-2"]
 }
 
 # --- [기능 함수] ---
@@ -87,8 +93,9 @@ if st.session_state.page == 'input':
 
     def get_safe(field, default=""):
         if student_data is not None:
+            field_clean = field.replace(" ", "")
             for k in student_data.index:
-                if str(k).strip().replace(" ", "") == field: return str(student_data[k])
+                if str(k).strip().replace(" ", "") == field_clean: return str(student_data[k])
         return default
 
     # 1. 기본 정보
@@ -124,7 +131,7 @@ if st.session_state.page == 'input':
     # [파닉스]
     p_books = ["선택 안 함"] + list(PHONICS_DATA.keys())
     p_book = st.selectbox("파닉스 교재", p_books, index=p_books.index(v) if (v:=get_safe("파닉스교재")) in p_books else 0)
-    p_unit = st.selectbox("└ 파닉스 Unit", PHONICS_DATA[p_book]) if p_book != "선택 안 함" else "선택 안 함"
+    p_unit = st.selectbox("└ 파닉스 Unit 선택", PHONICS_DATA[p_book]) if p_book != "선택 안 함" else "선택 안 함"
 
     # [ELT]
     elt_books = ["선택 안 함"] + ELT_BOOKS
@@ -140,43 +147,30 @@ if st.session_state.page == 'input':
     r_book = st.selectbox("독해 교재", rd_books, index=rd_books.index(v) if (v:=get_safe("독해교재")) in rd_books else 0)
     r_unit = st.text_input("└ 독해 Unit", placeholder="예: <Unit 01>")
 
-    # [문법] - 복구 완료!
+    # [문법]
     gr_books = ["선택 안 함", "Azar Basic (Red)", "Azar Fundamentals", "기타"]
     g_book = st.selectbox("문법 교재", gr_books, index=gr_books.index(v) if (v:=get_safe("문법교재")) in gr_books else 0)
-    g_sub = "선택 안 함"
-    if g_book == "Azar Basic (Red)":
-        g_sub = st.selectbox("└ Azar 세부 항목", AZAR_BASIC_FULL_LIST)
-    elif g_book != "선택 안 함":
-        g_sub = st.text_input("└ 단원명 직접 입력")
+    g_sub = st.selectbox("└ Azar 세부 항목", AZAR_BASIC_FULL_LIST) if g_book == "Azar Basic (Red)" else st.text_input("└ 단원명 직접 입력")
 
-    # [라이팅] - 복구 완료!
+    # [라이팅] - Basic Structure 복구 완료!
     wr_books = ["선택 안 함"] + list(WRITING_DATA.keys())
     w_book = st.selectbox("라이팅 교재", wr_books, index=wr_books.index(v) if (v:=get_safe("라이팅교재")) in wr_books else 0)
     w_ls = st.selectbox("└ 라이팅 세부 단원", WRITING_DATA[w_book]) if w_book != "선택 안 함" else "선택 안 함"
 
     st.divider()
 
-    # 4. 과제 정밀 분석
-    st.subheader("📸 4. 과제 정밀 분석")
+    # 4. 과제 정밀 분석 및 5. 총평 (기존 로직 동일)
     up_file = st.file_uploader("과제 사진 업로드", type=['jpg', 'png'])
     domain = st.selectbox("분석 영역", ["선택 안 함", "문법", "어휘", "독해", "라이팅"])
-    
-    if st.button("🤖 과제 분석 시작"):
-        if up_file and domain != "선택 안 함":
-            with st.spinner("AI 분석 중..."):
-                try:
-                    img = Image.open(up_file)
-                    img.thumbnail((800, 800))
-                    prompt = f"엘케이어학원 선생님으로서 이 {domain} 과제 사진을 보고 학생의 성취도를 한국어로 2~3문장 분석해줘."
-                    res = client.models.generate_content(model="gemini-1.5-flash", contents=[prompt, img])
-                    st.session_state.ai_res = res.text
-                except Exception as e: st.error(f"오류: {e}")
-
+    if st.button("🤖 과제 분석 시작") and up_file and domain != "선택 안 함":
+        with st.spinner("분석 중..."):
+            try:
+                img = Image.open(up_file)
+                img.thumbnail((800, 800))
+                res = client.models.generate_content(model="gemini-1.5-flash", contents=[f"{domain} 과제 분석해줘", img])
+                st.session_state.ai_res = res.text
+            except Exception as e: st.error(f"오류: {e}")
     ai_fb = st.text_area("분석 결과 확인", value=st.session_state.ai_res, height=120)
-
-    st.divider()
-
-    # 5. 총평
     content = st.text_area("선생님 피드백")
     hw_status = st.selectbox("과제 수행도", ["매우 우수", "우수", "보통", "미흡"])
 
@@ -187,7 +181,6 @@ if st.session_state.page == 'input':
             target_info = f"{grade} {display_class}{name} 학생"
             v_results = [f"• 1회차: {v1_c} / {v1_t} ({int((v1_c/v1_t)*100)}%)"]
             if v2_c > 0: v_results.append(f"• 2회차: {v2_c} / {v2_t} ({int((v2_c/v2_t)*100)}%)")
-            if v3_c > 0: v_results.append(f"• 3회차: {v3_c} / {v3_t} ({int((v3_c/v3_t)*100)}%)")
             items = []
             if p_book != "선택 안 함": items.append(f"• 파닉스: {p_book} [{p_unit}]")
             if elt_book != "선택 안 함": items.append(f"• ELT독해: {elt_book} [{elt_unit}]")
