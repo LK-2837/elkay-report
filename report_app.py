@@ -16,7 +16,7 @@ else:
 
 # --- [상세 커리큘럼 데이터 정의 - 절대 요약 금지] ---
 
-# [문법] Azar Basic (Red) 전체 세부 항목 복구 (1-1 ~ 7-10)
+# [문법] Azar Basic (Red) 전체 세부 항목 (1-1 ~ 7-10)
 AZAR_BASIC_FULL_LIST = [
     "1-1 단수 인칭대명사+Be동사", "1-2 복수 인칭대명사+Be동사", "1-3 단수 명사+Be동사", "1-4 복수 명사+Be동사", 
     "1-5 인칭대명사+Be동사 축약", "1-6 Be동사 부정문", "1-7 Be동사+형용사", "1-8 Be동사+장소", "1-9 Be동사 구조 요약",
@@ -35,27 +35,27 @@ AZAR_BASIC_FULL_LIST = [
     "7-5 There+Be동사 의문문", "7-6 How Many 의문문", "7-7 장소 전치사", "7-8 위치 전치사", "7-9 Would Like", "7-10 Would Like vs Like"
 ]
 
-# [라이팅] Bridge Writing 상세 항목 100% 복구
+# [라이팅] 전 교재 상세 항목 복구 및 "스피킹&라이팅" 추가
 WRITING_DATA = {
-    "Basic Structure": [f"Unit {i}" for i in range(1, 13)],
-    "Bridge Writing 1": ["Vocabulary", "Sentence 1~5", "Part 1. 관사", "Part 2. 전치사", "Part 3. but/because", "Part 4. 부정문", "Part 5. 의문문", "Story 1-1~2-5"],
-    "Bridge Writing 2": ["Vocabulary", "Sentence 1~6", "Part 1. 의문사", "Part 2. 3인칭", "Part 3. 형용사보어", "Part 4. will", "Part 5. 's", "Part 6. Please", "Story 1-1~3-4"],
-    "Bridge Writing 3": ["Vocabulary", "Sentence 1~6", "Part 1. There", "Part 2. 소유격", "Part 3. 의문사", "Part 4. Don't", "Part 5. can", "Part 6. to", "Story 1-1~3-4"],
-    "Bridge Writing 4-1": ["Vocabulary", "Sentence 1~6", "Part 1~6", "Story"],
-    "Bridge Writing 4-2": ["Vocabulary", "Sentence 1~6", "Part 1~6", "Story"],
-    "Bridge Writing 5": ["Vocabulary", "Sentence 1~6", "Part 1~6", "Story"],
-    "Bridge Writing 6": ["Vocabulary", "Sentence 1~6", "Part 1~6", "Story"],
-    "OK Writing 1": ["Vocab", "Sentence 1~6", "Part 1. 전치사", "Part 2. 진행형", "Part 3. 부정문", "Part 4. and/because", "Part 5. 명령문", "Story 1-1~3-4"],
-    "OK Writing 2": ["Vocab", "Sentence 1~6", "Part 1. 소유격", "Part 2. There is/are", "Part 3. but/because", "Part 4. 대상 2개", "Part 5. 의문문", "Part 6. look+형용사", "Part 7. don't", "Story 1-1~3-4"],
-    "OK Writing 3": ["Vocab", "Sentence 1~9", "Part 1. of", "Part 2. to부정사", "Part 3. can", "Part 4. 비인칭", "Part 5. Let's", "Part 6. 3인칭단수", "Part 7. doesn't", "Story 1-1~3-5"],
-    "OK Writing 4": ["Vocab", "Sentence 1~7", "Part 1. will", "Part 2. must", "Part 3. to부정사", "Part 4. that절", "Part 5. Do", "Part 6. 의문사", "Story 1-1~2-4"],
-    "OK Writing 5": ["Vocab", "Sentence 1~9", "Part 1. 명령문", "Part 2. 빈도부사", "Part 3. Does", "Part 4. to부정사", "Part 5. 원급", "Part 6. 비교급", "Part 7. 최상급", "Story 1-1~2-2"],
-    "OK Writing 6": ["Vocab", "Sentence 1~8", "Part 1. 과거", "Part 2. have to", "Part 3. Did", "Part 4. didn't", "Part 5. 동명사주어", "Part 6. 의문사구", "Part 7. 접속사", "Story 1-1~1-6"],
-    "OK Writing 7": ["Vocab", "Sentence 1~12", "Part 1. 동명사목적어", "Part 2. 가주어 it", "Part 3. 형용사보어", "Part 4. 재귀대명사", "Part 5. 의문사구", "Part 6. should", "Part 7. 지각동사", "Story 1-1~3-2"],
-    "Training for Reading S1": ["Vocabulary", "Training 1~11", "Sentence Study"],
-    "Training for Reading S2": ["Vocabulary", "Training 1~11", "Sentence Study"],
-    "Training for Reading S3": ["Vocabulary", "Training 1~9", "Story 1~3"],
-    "Training for Reading S4": ["Vocabulary", "Training 1~9", "Story 1~2"]
+    "Basic Structure": [f"Unit {i}" for i in range(1, 13)] + ["스피킹&라이팅"],
+    "Bridge Writing 1": ["Vocabulary", "Sentence 1~5", "Part 1. 관사", "Part 2. 전치사", "Part 3. but/because", "Part 4. 부정문", "Part 5. 의문문", "Story 1-1~2-5", "스피킹&라이팅"],
+    "Bridge Writing 2": ["Vocabulary", "Sentence 1~6", "Part 1. 의문사", "Part 2. 3인칭", "Part 3. 형용사보어", "Part 4. will", "Part 5. 's", "Part 6. Please", "Story 1-1~3-4", "스피킹&라이팅"],
+    "Bridge Writing 3": ["Vocabulary", "Sentence 1~6", "Part 1. There", "Part 2. 소유격", "Part 3. 의문사", "Part 4. Don't", "Part 5. can", "Part 6. to", "Story 1-1~3-4", "스피킹&라이팅"],
+    "Bridge Writing 4-1": ["Vocabulary", "Sentence 1~6", "Part 1~6", "Story", "스피킹&라이팅"],
+    "Bridge Writing 4-2": ["Vocabulary", "Sentence 1~6", "Part 1~6", "Story", "스피킹&라이팅"],
+    "Bridge Writing 5": ["Vocabulary", "Sentence 1~6", "Part 1~6", "Story", "스피킹&라이팅"],
+    "Bridge Writing 6": ["Vocabulary", "Sentence 1~6", "Part 1~6", "Story", "스피킹&라이팅"],
+    "OK Writing 1": ["Vocab", "Sentence 1~6", "Part 1. 전치사", "Part 2. 진행형", "Part 3. 부정문", "Part 4. and/because", "Part 5. 명령문", "Story 1-1~3-4", "스피킹&라이팅"],
+    "OK Writing 2": ["Vocab", "Sentence 1~6", "Part 1. 소유격", "Part 2. There is/are", "Part 3. but/because", "Part 4. 대상 2개", "Part 5. 의문문", "Part 6. look+형용사", "Part 7. don't", "Story 1-1~3-4", "스피킹&라이팅"],
+    "OK Writing 3": ["Vocab", "Sentence 1~9", "Part 1. of", "Part 2. to부정사", "Part 3. can", "Part 4. 비인칭", "Part 5. Let's", "Part 6. 3인칭단수", "Part 7. doesn't", "Story 1-1~3-5", "스피킹&라이팅"],
+    "OK Writing 4": ["Vocab", "Sentence 1~7", "Part 1. will", "Part 2. must", "Part 3. to부정사", "Part 4. that절", "Part 5. Do", "Part 6. 의문사", "Story 1-1~2-4", "스피킹&라이팅"],
+    "OK Writing 5": ["Vocab", "Sentence 1~9", "Part 1. 명령문", "Part 2. 빈도부사", "Part 3. Does", "Part 4. to부정사", "Part 5. 원급", "Part 6. 비교급", "Part 7. 최상급", "Story 1-1~2-2", "스피킹&라이팅"],
+    "OK Writing 6": ["Vocab", "Sentence 1~8", "Part 1. 과거", "Part 2. have to", "Part 3. Did", "Part 4. didn't", "Part 5. 동명사주어", "Part 6. 의문사구", "Part 7. 접속사", "Story 1-1~1-6", "스피킹&라이팅"],
+    "OK Writing 7": ["Vocab", "Sentence 1~12", "Part 1. 동명사목적어", "Part 2. 가주어 it", "Part 3. 형용사보어", "Part 4. 재귀대명사", "Part 5. 의문사구", "Part 6. should", "Part 7. 지각동사", "Story 1-1~3-2", "스피킹&라이팅"],
+    "Training for Reading S1": ["Vocabulary", "Training 1. a/an/the+명사", "Training 2. 복수명사", "Training 3. 형용사+명사", "Training 4. 전치사+명사 (1)", "Training 5. 전치사+명사 (2)", "Training 6. 전치사+명사 (3)", "Training 7. 주인공+동작 (1)", "Training 8. 주인공+동작 (2)", "Training 9. 주인공+동작 (3)", "Training 10. 주인공+동작+대상 (1)", "Training 11. 주인공+동작+대상 (2)", "스피킹&라이팅"],
+    "Training for Reading S2": ["Vocabulary", "Training 1. 주인공+be+명사 (1)", "Training 2. 주인공+be+명사 (2)", "Training 3. 주인공+be+형용사", "Training 4. 주인공+be+명사/형용사 (1)", "Training 5. 주인공+be+명사/형용사 (2)", "Training 6. 주인공+be+명사/형용사 (3)", "Training 7. 주인공+be+전치사+명사 (1)", "Training 8. 주인공+be+전치사+명사 (2)", "Training 9. 주인공+be+전치사+명사 (3)", "Training 10. 주인공+be+명사/형용사/전치사 (Review)", "Training 11. 명령문", "스피킹&라이팅"],
+    "Training for Reading S3": ["Vocabulary", "Training 1. This/That+is+단수명사", "Training 2. This/That+is+소유격+명사 (1)", "Training 3. This/That+is+소유격+명사 (2)", "Training 4. 주인공과 대상이 ‘소유격+명사’", "Training 5. 주인공+동작+전치사+명사", "Training 6. 주인공+동작+대상+전치사+명사", "Training 7. 명령문: 동작+(대상)+전치사+명사", "Training 8. 주인공+be+~ing+(대상)", "Training 9. 주인공+be+~ing+(대상)+전치사+명사", "Story 1-1", "Story 1-2", "Story 1-3", "Story 2", "Story 3", "스피킹&라이팅"],
+    "Training for Reading S4": ["Vocabulary", "Training 1. 주인공+동작+대상(대명사)", "Training 2. 명사 and 명사", "Training 3. 형용사 and 형용사", "Training 4. 문장 and 문장", "Training 5. Because 주인공+동작", "Training 6. 주인공+동작+(대상)+부사", "Training 7. 부사+형용사", "Training 8. 부사+부사", "Training 9. 부사의 다양한 위치", "Story 1-1", "Story 1-2", "Story 1-3", "Story 2-1", "Story 2-2", "스피킹&라이팅"]
 }
 
 # Phonics Lv 2~5 예문 데이터 유지
@@ -71,7 +71,7 @@ V_BOOKS_LIST = ["능률 보카 기본 400", "능률 보카 필수 500", "[개정
 ELT_BOOKS = ["30 Word Reading(1)", "30 Word Reading(2)", "40 Word Reading(1)", "40 Word Reading(2)", "40 Read it(1)", "40 Read it(2)", "40 Read it(3)", "60 Read it(1)", "60 Read it(2)", "60 Read it(3)"]
 READING_BOOKS_LIST = ["리딩튜터 스타터(1)", "리딩튜터 스타터(2)", "리딩튜터 스타터(3)", "리딩튜터 주니어(1)", "리딩튜터 주니어(2)", "리딩튜터 주니어(3)", "리딩튜터 주니어(4)", "수능토픽(레벨1)", "수능토픽(레벨2)", "수능토픽(레벨3)", "자체 독해 자료"]
 
-# --- [엑셀 불러오기 및 인덱싱 로직] ---
+# --- [기능 함수] ---
 def load_excel_data(file_path):
     try:
         df = pd.read_excel(file_path)
@@ -166,17 +166,17 @@ if st.session_state.page == 'input':
     news_paper = st.selectbox("영자신문 선택", ns_options, index=find_index(ns_options, get_safe("영자신문")))
     news_unit = st.text_input("└ 영자신문 유닛/주제 입력", placeholder="예: <Unit 01> Space Travel")
 
-    # [일반독해] - 자동 반영 로직 강화 버전
+    # [일반독해]
     rd_books = ["선택 안 함"] + READING_BOOKS_LIST
     r_book = st.selectbox("독해 교재", rd_books, index=find_index(rd_books, get_safe("독해교재")))
     r_unit = st.text_input("└ 독해 Unit", placeholder="예: <Unit 01>")
 
-    # [문법] - Azar 100% 상세 내역 유지
+    # [문법] - Azar 상세 항목 보존
     gr_books = ["선택 안 함", "Azar Basic (Red)", "Azar Fundamentals", "기타"]
     g_book = st.selectbox("문법 교재", gr_books, index=find_index(gr_books, get_safe("문법교재")))
     g_sub = st.selectbox("└ Azar 상세 항목", AZAR_BASIC_FULL_LIST) if g_book == "Azar Basic (Red)" else st.text_input("└ 단원명 직접 입력")
 
-    # [라이팅] - Bridge 1~6 상세 복구 완료
+    # [라이팅] - 복구 및 "스피킹&라이팅" 추가
     wr_books = ["선택 안 함"] + list(WRITING_DATA.keys())
     w_book = st.selectbox("라이팅 교재", wr_books, index=find_index(wr_books, get_safe("라이팅교재")))
     w_ls = st.selectbox("└ 라이팅 세부 단원", WRITING_DATA[w_book]) if w_book != "선택 안 함" else "선택 안 함"
