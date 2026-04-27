@@ -8,65 +8,24 @@ from google import genai
 # 1. 페이지 설정
 st.set_page_config(page_title="엘케이어학원 학습 리포트", layout="centered")
 
-# 2. AI 클라이언트 설정 (과제 정밀 분석용)
+# 2. 클라이언트 설정
 if "gemini_api_key" in st.secrets:
     client = genai.Client(api_key=st.secrets["gemini_api_key"])
 else:
     st.error("Secrets에 'gemini_api_key'를 등록해 주세요.")
 
-# --- [전체 커리큘럼 데이터 정의] ---
+# --- [상세 커리큘럼 데이터 정의] ---
 
-# Phonics 상세 유닛 및 예문 데이터 (Lv2~Lv5 이미지 분석 반영)
+# Phonics 상세 데이터 (이미지 분석 결과 반영)
 PHONICS_DATA = {
     "Phonics 1": [f"<Unit {i:02d}>" for i in range(1, 11)],
-    "Phonics 2": [
-        "<Unit 01> (hat, cat, bat, rat, man, can, pan, van) / A cat has the hat. / A man has the pan. / A bat has the rat.",
-        "<Unit 02> (map, lap, nap, gap, ham, jam, ram, Sam) / Sam has the jam. / The ram has a nap. A map is on the lap.",
-        "<Unit 03> (net, jet, vet, wet, bed, red, Ted) / The bed is red. / Ted is wet. / The jet is in the net.",
-        "<Unit 04> (leg, Meg, keg, pen, men, hen, ten) / The hen is in the keg. The pen is on Meg. / The men have ten legs.",
-        "<Unit 05> (hit, pit, kit, sit, pin, bin, fin, win) / He hits the bin. / He sits on the pin. / The kit is in the pit.",
-        "<Unit 06> (zip, dip, lip, rip, pig, big, dig, wig) / The pig is big. / I zip my lips. / I have a big wig.",
-        "<Unit 07> (pot, cot, dot, hot, box, fox, ox) / The fox is on the box. / The bug has dots. / The ox is in the pot.",
-        "<Unit 08> (top, mop, hop, pop, dog, log, fog, jog) / I have a mop. / I jog with my dog. / I play with a top.",
-        "<Unit 09> (hut, cut, nut, sun, gun, fun, run) / She cuts the nut. / They run in the sun. / A gun is in the hut.",
-        "<Unit 10> (tub, rub, sub, cub, mug, bug, rug, hug) / The bug is on the sub. / They hug on the rug. / The cub jumps to the tub."
-    ],
-    "Phonics 3": [
-        "<Unit 01> (tape, ape, cape, game, name, same, case, base, vase) / The ape has a cape. / They have the same name. / A vase is on the case.",
-        "<Unit 02> (cake, bake, lake, cane, mane, Jane, cave, save, wave) / Jane bakes the cake. / We wave at the lake. / A cane is in the cave.",
-        "<Unit 03> (bite, kite, site, hide, ride, side, ice, dice, rice) / I bite the ice. / You ride a bike. / You have one dice.",
-        "<Unit 04> (bike, hike, like, pine, line, nine, dive, five, hive) / He likes me. / I see five lines. / A hive is in the pine.",
-        "<Unit 05> (rope, hope, nope, dome, home, Rome, hose, rose, nose) / A hose is in the dome. / A rose is on the dome. / I hope to go home.",
-        "<Unit 06> (note, vote, rote, bone, cone, zone, hole, pole, mole) / Two bones are in the hole. / Two poles are in the pet zone. / Two notes are on the cone.",
-        "<Unit 07> (mute, cute, cube, tube, use, fuse) / This is a cube. / This is a fuse. / This is a cute tube.",
-        "<Unit 08> (Duke, puke, dune, June, tune, huge) / Duke pukes on the dune. / I can make a tune. / This is a huge box."
-    ],
-    "Phonics 4": [
-        "<Unit 01> (plate, plum, plane, black, block, blade, flag, flap, flute) / A plum is on the plate. / A flag flaps on the plane. / Here is a black block.",
-        "<Unit 02> (press, price, prize, bride, brave, brick, frog, frame, free) / I press the brick. / He is free now. / I win the prize.",
-        "<Unit 03> (clap, clip, clam, globe, glass, glove, slide, sled, sleep) / He sleeps in the clam. / She slides into the glass. / A clip is in the glove.",
-        "<Unit 04> (crab, crane, creep, grape, grass, green, drive, drum, dress) / A crab creeps on the drum. / I want a grape dress. / A crane drives the green car.",
-        "<Unit 05> (spin, space, spice, stop, stick, stove, skate, ski, skin) / Four balls spin on the ski. / Four balls stop on the ski. / Four sticks are in space.",
-        "<Unit 06> (smoke, smell, smile, sneeze, snake, sniff, sweep, swan, swim) / Swans swim in the lake. / We smile at the snake. / The dog sniffs at two bones.",
-        "<Unit 07> (lamp, jump, stamp, drink, wink, skunk, hang, song, ring) / I jump over the lamp. / I wink and drink. / I sing a song.",
-        "<Unit 08> (chess, cheese, bench, lunch, shell, ship, fish, wash) / The chess is on the bench. / I wash the shell. / Cheese and fish are for lunch.",
-        "<Unit 09> (whale, white, wheel, wheat, phone, graph, photo, dolphin) / A whale is in the photo. / Wheat is on the phone. / A wheel is on the dolphin.",
-        "<Unit 10> (thin, thick, bath, math, this, that, these, those) / This is a thick book. / That is a thin book. / These are math books."
-    ],
-    "Phonics 5": [
-        "<Unit 01> (tail, snail, train, chain, play, tray, clay, spray) / He plays with clay. / All chains are on the tray. / All snails are on the train.",
-        "<Unit 02> (bee, seed, tree, tea, meat, leaf, key, honey, money) / The key is old. / The bee paints a money tree. / A leaf is in the honey tea.",
-        "<Unit 03> (die, pie, tie, find, kind, blind, sigh, fight, night) / He is very kind. / She sighs at night. / They fight for the pie.",
-        "<Unit 04> (boat, coat, soap, road, grow, blow, crow, snow) / A crow blows the soap boat. / A plant grows in the snow. / A coat is on the road.",
-        "<Unit 05> (new, chew, stew, blue, clue, glue, room, spoon, moon) / He finds the clue. / The blue glue is on the spoon. / The goat chews my new tie.",
-        "<Unit 06> (paw, draw, straw, head, bread, thread, book, foot, look) / Draw the paw now. / Draw the head again. / Look at the open book now.",
-        "<Unit 07> (house, mouse, brown, clown, oil, soil, boy, toy) / A mouse lives in the house. / The boy jumps up and down. / The clown has brown soil.",
-        "<Unit 08> (baby, study, cloudy, cherry, cry, dry, fly, sky) / They cry with the baby. / They dry the cherry. / They study in the sky.",
-        "<Unit 09> (car, arm, star, shark, corn, fork, store, horse) / A horse eats corn. / A star is under the fork. / A shark is in the car store.",
-        "<Unit 10> (nurse, purse, burn, bird, girl, skirt, mother, teacher, farmer) / The girl wears a skirt and a purse. / My teacher gives me the bird. / My mother is a nurse."
-    ]
+    "Phonics 2": ["<Unit 01> (hat, cat, bat, rat, man, can, pan, van) / A cat has the hat. / A man has the pan. / A bat has the rat.", "<Unit 02> (map, lap, nap, gap, ham, jam, ram, Sam) / Sam has the jam. / The ram has a nap. A map is on the lap.", "<Unit 03> (net, jet, vet, wet, bed, red, Ted) / The bed is red. / Ted is wet. / The jet is in the net.", "<Unit 04> (leg, Meg, keg, pen, men, hen, ten) / The hen is in the keg. The pen is on Meg. / The men have ten legs.", "<Unit 05> (hit, pit, kit, sit, pin, bin, fin, win) / He hits the bin. / He sits on the pin. / The kit is in the pit.", "<Unit 06> (zip, dip, lip, rip, pig, big, dig, wig) / The pig is big. / I zip my lips. / I have a big wig.", "<Unit 07> (pot, cot, dot, hot, box, fox, ox) / The fox is on the box. / The bug has dots. / The ox is in the pot.", "<Unit 08> (top, mop, hop, pop, dog, log, fog, jog) / I have a mop. / I jog with my dog. / I play with a top.", "<Unit 09> (hut, cut, nut, sun, gun, fun, run) / She cuts the nut. / They run in the sun. / A gun is in the hut.", "<Unit 10> (tub, rub, sub, cub, mug, bug, rug, hug) / The bug is on the sub. / They hug on the rug. / The cub jumps to the tub."],
+    "Phonics 3": ["<Unit 01> (tape, ape, cape, game, name, same, case, base, vase) / The ape has a cape. / They have the same name. / A vase is on the case.", "<Unit 02> (cake, bake, lake, cane, mane, Jane, cave, save, wave) / Jane bakes the cake. / We wave at the lake. / A cane is in the cave.", "<Unit 03> (bite, kite, site, hide, ride, side, ice, dice, rice) / I bite the ice. / You ride a bike. / You have one dice.", "<Unit 04> (bike, hike, like, pine, line, nine, dive, five, hive) / He likes me. / I see five lines. / A hive is in the pine.", "<Unit 05> (rope, hope, nope, dome, home, Rome, hose, rose, nose) / A hose is in the dome. / A rose is on the dome. / I hope to go home.", "<Unit 06> (note, vote, rote, bone, cone, zone, hole, pole, mole) / Two bones are in the hole. / Two poles are in the pet zone. / Two notes are on the cone.", "<Unit 07> (mute, cute, cube, tube, use, fuse) / This is a cube. / This is a fuse. / This is a cute tube.", "<Unit 08> (Duke, puke, dune, June, tune, huge) / Duke pukes on the dune. / I can make a tune. / This is a huge box."],
+    "Phonics 4": ["<Unit 01> (plate, plum, plane, black, block, blade, flag, flap, flute) / A plum is on the plate. / A flag flaps on the plane. / Here is a black block.", "<Unit 02> (press, price, prize, bride, brave, brick, frog, frame, free) / I press the brick. / He is free now. / I win the prize.", "<Unit 03> (clap, clip, clam, globe, glass, glove, slide, sled, sleep) / He sleeps in the clam. / She slides into the glass. / A clip is in the glove.", "<Unit 04> (crab, crane, creep, grape, grass, green, drive, drum, dress) / A crab creeps on the drum. / I want a grape dress. / A crane drives the green car.", "<Unit 05> (spin, space, spice, stop, stick, stove, skate, ski, skin) / Four balls spin on the ski. / Four balls stop on the ski. / Four sticks are in space.", "<Unit 06> (smoke, smell, smile, sneeze, snake, sniff, sweep, swan, swim) / Swans swim in the lake. / We smile at the snake. / The dog sniffs at two bones.", "<Unit 07> (lamp, jump, stamp, drink, wink, skunk, hang, song, ring) / I jump over the lamp. / I wink and drink. / I sing a song.", "<Unit 08> (chess, cheese, bench, lunch, shell, ship, fish, wash) / The chess is on the bench. / I wash the shell. / Cheese and fish are for lunch.", "<Unit 09> (whale, white, wheel, wheat, phone, graph, photo, dolphin) / A whale is in the photo. / Wheat is on the phone. / A wheel is on the dolphin.", "<Unit 10> (thin, thick, bath, math, this, that, these, those) / This is a thick book. / That is a thin book. / These are math books."],
+    "Phonics 5": ["<Unit 01> (tail, snail, train, chain, play, tray, clay, spray) / He plays with clay. / All chains are on the tray. / All snails are on the train.", "<Unit 02> (bee, seed, tree, tea, meat, leaf, key, honey, money) / The key is old. / The bee paints a money tree. / A leaf is in the honey tea.", "<Unit 03> (die, pie, tie, find, kind, blind, sigh, fight, night) / He is very kind. / She sighs at night. / They fight for the pie.", "<Unit 04> (boat, coat, soap, road, grow, blow, crow, snow) / A crow blows the soap boat. / A plant grows in the snow. / A coat is on the road.", "<Unit 05> (new, chew, stew, blue, clue, glue, room, spoon, moon) / He finds the clue. / The blue glue is on the spoon. / The goat chews my new tie.", "<Unit 06> (paw, draw, straw, head, bread, thread, book, foot, look) / Draw the paw now. / Draw the head again. / Look at the open book now.", "<Unit 07> (house, mouse, brown, clown, oil, soil, boy, toy) / A mouse lives in the house. / The boy jumps up and down. / The clown has brown soil.", "<Unit 08> (baby, study, cloudy, cherry, cry, dry, fly, sky) / They cry with the baby. / They dry the cherry. / They study in the sky.", "<Unit 09> (car, arm, star, shark, corn, fork, store, horse) / A horse eats corn. / A star is under the fork. / A shark is in the car store.", "<Unit 10> (nurse, purse, burn, bird, girl, skirt, mother, teacher, farmer) / The girl wears a skirt and a purse. / My teacher gives me the bird. / My mother is a nurse."]
 }
 
+# 어휘 교재 (명칭 정정 완료)
 V_BOOKS_LIST = ["능률 보카 기본 400", "능률 보카 필수 500", "[개정]교육청 초등어휘 900", "보카클리어 중학기본", "보카클리어 중학실력", "보카클리어 중학완성", "워드마스터 고등기본", "보카익스프레스[중등]", "기타"]
 ELT_BOOKS = ["30 Word Reading(1)", "30 Word Reading(2)", "40 Word Reading(1)", "40 Word Reading(2)", "40 Read it(1)", "40 Read it(2)", "40 Read it(3)", "60 Read it(1)", "60 Read it(2)", "60 Read it(3)"]
 READING_BOOKS_LIST = ["리딩튜터 스타터(1)", "리딩튜터 스타터(2)", "리딩튜터 스타터(3)", "리딩튜터 주니어(1)", "리딩튜터 주니어(2)", "리딩튜터 주니어(3)", "리딩튜터 주니어(4)", "수능토픽(레벨1)", "수능토픽(레벨2)", "수능토픽(레벨3)", "자체 독해 자료"]
@@ -96,54 +55,63 @@ if "ai_res" not in st.session_state: st.session_state.ai_res = ""
 if st.session_state.page == 'input':
     st.title("🍎 엘케이어학원 학습 리포트") 
 
-    # [수정] 엑셀 자동 감지 로직 보강
+    # [수정] 엑셀 불러오기 (KeyError 방지 강화)
     with st.expander("📂 학생 교재 목록(엑셀) 불러오기", expanded=False):
-        uploaded_excel = st.file_uploader("가로/세로 모든 형식의 엑셀 파일을 지원합니다", type=['xlsx'])
+        uploaded_excel = st.file_uploader("가로/세로 모든 형식 지원", type=['xlsx'])
         student_data = None
         if uploaded_excel:
             try:
-                # 1. 일단 표준 형식(가로)으로 읽기
                 df = pd.read_excel(uploaded_excel)
-                df.columns = [str(c).strip() for c in df.columns] # 공백 제거
+                df.columns = [str(c).strip().replace(" ", "") for c in df.columns] # 공백 완전 제거
                 
-                # 2. '이름' 컬럼이 없으면 세로 형식으로 뒤집기
+                # '이름'이 컬럼에 없으면 세로 형식으로 뒤집기
                 if '이름' not in df.columns:
                     df = pd.read_excel(uploaded_excel, index_col=0).T.reset_index()
-                    df.columns = [str(c).strip() for c in df.columns] # 공백 재제거
+                    df.columns = [str(c).strip().replace(" ", "") for c in df.columns]
                 
                 if '이름' in df.columns:
-                    st.success("엑셀 데이터를 성공적으로 분석했습니다!")
+                    st.success("엑셀 데이터를 불러왔습니다!")
                     sel_student = st.selectbox("학생 선택", ["선택 안 함"] + list(df['이름'].unique()))
                     if sel_student != "선택 안 함":
                         student_data = df[df['이름'] == sel_student].iloc[0]
                 else:
-                    st.error("엑셀 파일에 '이름' 항목이 보이지 않습니다. 첫 번째 줄(혹은 첫 번째 열)을 확인해 주세요.")
-            except Exception as e:
-                st.error(f"엑셀 분석 오류: {e}")
+                    st.error("엑셀에 '이름' 항목이 없습니다. 첫 줄이나 첫 열을 확인해 주세요.")
+            except Exception as e: st.error(f"분석 오류: {e}")
 
     st.divider()
+
+    # 안전하게 데이터를 가져오는 함수 (KeyError 방지용)
+    def get_safe_data(field_name, default=""):
+        if student_data is not None:
+            # 필드명에서 공백 제거 후 비교
+            for k in student_data.index:
+                if str(k).strip().replace(" ", "") == field_name:
+                    return str(student_data[k])
+        return default
 
     # 1. 기본 정보
     st.subheader("📍 1. 기본 정보")
     report_date = st.date_input("학습일 선택", value=datetime.today())
     c1, c2, c3 = st.columns(3)
     
-    grade_list = ["초등", "중등", "고등"]
-    grade_def = grade_list.index(student_data['학년']) if student_data is not None and str(student_data['학년']) in grade_list else 0
+    g_val = get_safe_data("학년")
+    grade_def = grade_list.index(g_val) if g_val in (grade_list := ["초등", "중등", "고등"]) else 0
     grade = c1.selectbox("학년", grade_list, index=grade_def)
     
+    c_val = get_safe_data("반")
     class_list = ["선택 없음", "Beginner-2시", "Beginner-3시", "Ph1", "Inter 2시", "G-Advanced 2시"]
-    class_def = class_list.index(student_data['반']) if student_data is not None and str(student_data['반']) in class_list else 0
+    class_def = class_list.index(c_val) if c_val in class_list else 0
     class_name = c2.selectbox("반 선택", class_list, index=class_def)
     
-    name = st.text_input("학생 이름", value=student_data['이름'] if student_data is not None else "", placeholder="이름 입력")
+    name = st.text_input("학생 이름", value=get_safe_data("이름"), placeholder="이름 입력")
 
     st.divider()
 
-    # 2. 어휘 섹션 (수정된 교재명 반영)
+    # 2. 어휘 섹션
     st.subheader("🅰️ 2. 어휘 (Vocabulary)")
     vc1, vc2 = st.columns([2, 1])
-    v_def = V_BOOKS_LIST.index(student_data['어휘교재']) if student_data is not None and str(student_data['어휘교재']) in V_BOOKS_LIST else 0
+    v_val = get_safe_data("어휘교재")
+    v_def = V_BOOKS_LIST.index(v_val) if v_val in V_BOOKS_LIST else 0
     v_book = vc1.selectbox("어휘 교재", V_BOOKS_LIST, index=v_def)
     v_unit = vc2.text_input("어휘 Unit 입력", placeholder="예: <Unit 01>")
     
@@ -161,51 +129,43 @@ if st.session_state.page == 'input':
 
     st.divider()
 
-    # 3. 주교재 및 수업 상세 (영자신문 섹션 분리 유지)
+    # 3. 주교재 및 수업 상세 (데이터 유연성 확보)
     st.subheader("📚 3. 주교재 및 수업 상세")
     
-    # Phonics
+    p_val = get_safe_data("파닉스교재")
     p_books_options = ["선택 안 함"] + list(PHONICS_DATA.keys())
-    p_def = p_books_options.index(student_data['파닉스교재']) if student_data is not None and str(student_data['파닉스교재']) in p_books_options else 0
+    p_def = p_books_options.index(p_val) if p_val in p_books_options else 0
     p_book = st.selectbox("파닉스 교재", p_books_options, index=p_def)
-    p_unit = "선택 안 함"
-    if p_book != "선택 안 함":
-        p_unit = st.selectbox("└ 파닉스 상세 Unit 선택", PHONICS_DATA[p_book])
+    p_unit = st.selectbox("└ 파닉스 상세 Unit", PHONICS_DATA[p_book]) if p_book != "선택 안 함" else "선택 안 함"
 
-    # ELT 독해
-    elt_books = ["선택 안 함"] + ELT_BOOKS
-    elt_def = elt_books.index(student_data['ELT교재']) if student_data is not None and str(student_data['ELT교재']) in elt_books else 0
-    elt_book = st.selectbox("ELT 독해 교재", elt_books, index=elt_def)
+    elt_val = get_safe_data("ELT교재")
+    elt_books_options = ["선택 안 함"] + ELT_BOOKS
+    elt_def = elt_books_options.index(elt_val) if elt_val in elt_books_options else 0
+    elt_book = st.selectbox("ELT 독해 교재", elt_books_options, index=elt_def)
     elt_unit = st.text_input("└ ELT Unit 입력", placeholder="예: <Unit 01>")
 
-    # 영자신문 섹션 (Kinder/Kids 선택)
+    ns_val = get_safe_data("영자신문")
     ns_options = ["선택 안 함", "<Kinder>", "<Kids>"]
-    ns_def = ns_options.index(student_data['영자신문']) if student_data is not None and str(student_data['영자신문']) in ns_options else 0
+    ns_def = ns_options.index(ns_val) if ns_val in ns_options else 0
     news_paper = st.selectbox("영자신문 선택", ns_options, index=ns_def)
 
-    # 일반 독해
-    r_books = ["선택 안 함"] + READING_BOOKS_LIST
-    r_def = r_books.index(student_data['독해교재']) if student_data is not None and str(student_data['독해교재']) in r_books else 0
-    r_book = st.selectbox("독해 교재", r_books, index=r_def)
+    rd_val = get_safe_data("독해교재")
+    r_books_options = ["선택 안 함"] + READING_BOOKS_LIST
+    r_def = r_books_options.index(rd_val) if rd_val in r_books_options else 0
+    r_book = st.selectbox("독해 교재", r_books_options, index=r_def)
     r_unit = st.text_input("└ 독해 Unit 입력", placeholder="예: <Unit 01>")
 
-    # 문법
-    g_books = ["선택 안 함", "Azar Basic (Red)", "Azar Fundamentals", "기타"]
-    g_def = g_books.index(student_data['문법교재']) if student_data is not None and str(student_data['문법교재']) in g_books else 0
-    g_book = st.selectbox("문법 교재", g_books, index=g_def)
-    g_sub = "선택 안 함"
-    if g_book == "Azar Basic (Red)":
-        g_sub = st.selectbox("└ Azar 세부 항목", AZAR_BASIC_FULL_LIST)
-    elif g_book != "선택 안 함":
-        g_sub = st.text_input("└ 단원명 직접 입력")
+    gr_val = get_safe_data("문법교재")
+    g_books_options = ["선택 안 함", "Azar Basic (Red)", "Azar Fundamentals", "기타"]
+    g_def = g_books_options.index(gr_val) if gr_val in g_books_options else 0
+    g_book = st.selectbox("문법 교재", g_books_options, index=g_def)
+    g_sub = st.selectbox("└ Azar 세부 항목", AZAR_BASIC_FULL_LIST) if g_book == "Azar Basic (Red)" else st.text_input("└ 단원명 직접 입력")
 
-    # 라이팅
-    w_books = ["선택 안 함"] + list(WRITING_DATA.keys())
-    w_def = w_books.index(student_data['라이팅교재']) if student_data is not None and str(student_data['라이팅교재']) in w_books else 0
-    w_book = st.selectbox("라이팅 교재", w_books, index=w_def)
-    w_ls = "선택 안 함"
-    if w_book != "선택 안 함":
-        w_ls = st.selectbox("└ 라이팅 세부 단원", WRITING_DATA[w_book])
+    wr_val = get_safe_data("라이팅교재")
+    w_books_options = ["선택 안 함"] + list(WRITING_DATA.keys())
+    w_def = w_books_options.index(wr_val) if wr_val in w_books_options else 0
+    w_book = st.selectbox("라이팅 교재", w_books_options, index=w_def)
+    w_ls = st.selectbox("└ 라이팅 세부 단원", WRITING_DATA[w_book]) if w_book != "선택 안 함" else "선택 안 함"
 
     st.divider()
 
@@ -216,7 +176,7 @@ if st.session_state.page == 'input':
     
     if st.button("🤖 과제 분석 시작"):
         if up_file and domain != "선택 안 함":
-            with st.spinner("AI 분석 중..."):
+            with st.spinner("분석 중..."):
                 try:
                     img = Image.open(up_file)
                     img.thumbnail((800, 800))
@@ -231,7 +191,7 @@ if st.session_state.page == 'input':
 
     # 5. 선생님 총평
     st.subheader("✍️ 5. 선생님 총평")
-    content = st.text_area("상세 피드백 (태도 등)")
+    content = st.text_area("상세 피드백")
     hw_status = st.selectbox("과제 수행도", ["매우 우수", "우수", "보통", "미흡"])
 
     if st.button("리포트 생성", type="primary"):
@@ -239,11 +199,9 @@ if st.session_state.page == 'input':
         else:
             display_class = f"{class_name} " if class_name != "선택 없음" else ""
             target_info = f"{grade} {display_class}{name} 학생"
-            
             v_results = [f"• 1회차: {v1_c} / {v1_t} ({int((v1_c/v1_t)*100)}%)"]
             if v2_c > 0: v_results.append(f"• 2회차: {v2_c} / {v2_t} ({int((v2_c/v2_t)*100)}%)")
             if v3_c > 0: v_results.append(f"• 3회차: {v3_c} / {v3_t} ({int((v3_c/v3_t)*100)}%)")
-            
             items = []
             if p_book != "선택 안 함": items.append(f"• 파닉스: {p_book} [{p_unit}]")
             if elt_book != "선택 안 함": items.append(f"• ELT독해: {elt_book} [{elt_unit}]")
@@ -251,29 +209,11 @@ if st.session_state.page == 'input':
             if r_book != "선택 안 함": items.append(f"• 독해: {r_book} [{r_unit}]")
             if g_book != "선택 안 함": items.append(f"• 문법: {g_book} [{g_sub}]")
             if w_book != "선택 안 함": items.append(f"• 라이팅: {w_book} [{w_ls}]")
-            
-            f_sec = f"\n[선생님 피드백]\n{content}\n" if content.strip() else ""
-            a_sec = f"\n[과제 정밀 분석 - {domain}]\n{ai_fb}\n" if ai_fb.strip() else ""
-
-            report_text = f"""[ 엘케이어학원 학습 리포트 ]
-
-■ 대상: {target_info}
-■ 학습일: {report_date}
-
-1. 어휘 테스트 결과
-- 교재명: {v_book} ({v_unit})
-{"\n".join(v_results)}
-
-2. 주교재 학습 내용
-{"\n".join(items)}
-{f_sec}{a_sec}
-3. 과제 수행도: {hw_status}"""
-
+            report_text = f"[ 엘케이어학원 학습 리포트 ]\n\n■ 대상: {target_info}\n■ 학습일: {report_date}\n\n1. 어휘 테스트 결과\n- 교재명: {v_book} ({v_unit})\n" + "\n".join(v_results) + f"\n\n2. 주교재 학습 내용\n" + "\n".join(items) + f"\n\n[선생님 피드백]\n{content}\n\n[과제 정밀 분석 - {domain}]\n{ai_fb}\n\n3. 과제 수행도: {hw_status}"
             st.session_state.final_text = report_text
             st.session_state.page = 'result'; st.rerun()
 
 elif st.session_state.page == 'result':
     st.title("📄 완성된 리포트")
     st.text_area("텍스트 복사", st.session_state.final_text, height=500)
-    if st.button("처음으로 돌아가기"):
-        st.session_state.ai_res = ""; st.session_state.page = 'input'; st.rerun()
+    if st.button("처음으로 돌아가기"): st.session_state.ai_res = ""; st.session_state.page = 'input'; st.rerun()
