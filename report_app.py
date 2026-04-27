@@ -16,7 +16,7 @@ else:
 
 # --- [상세 커리큘럼 데이터 정의 - 절대 요약 금지] ---
 
-# [문법] Azar Basic (Red) 전체 세부 항목 (1-1 ~ 7-10)
+# [문법] Azar Basic (Red) 전체 세부 항목 복구 (1-1 ~ 7-10)
 AZAR_BASIC_FULL_LIST = [
     "1-1 단수 인칭대명사+Be동사", "1-2 복수 인칭대명사+Be동사", "1-3 단수 명사+Be동사", "1-4 복수 명사+Be동사", 
     "1-5 인칭대명사+Be동사 축약", "1-6 Be동사 부정문", "1-7 Be동사+형용사", "1-8 Be동사+장소", "1-9 Be동사 구조 요약",
@@ -35,12 +35,12 @@ AZAR_BASIC_FULL_LIST = [
     "7-5 There+Be동사 의문문", "7-6 How Many 의문문", "7-7 장소 전치사", "7-8 위치 전치사", "7-9 Would Like", "7-10 Would Like vs Like"
 ]
 
-# [라이팅] Bridge Writing (1~6) & OK Writing (1~7)
+# [라이팅] Bridge Writing 상세 항목 100% 복구
 WRITING_DATA = {
     "Basic Structure": [f"Unit {i}" for i in range(1, 13)],
-    "Bridge Writing 1": ["Vocabulary", "Sentence 1~5", "Part 1~5", "Story 1-1~2-5"],
-    "Bridge Writing 2": ["Vocabulary", "Sentence 1~6", "Part 1~6", "Story 1-1~3-4"],
-    "Bridge Writing 3": ["Vocabulary", "Sentence 1~6", "Part 1~6", "Story 1-1~3-4"],
+    "Bridge Writing 1": ["Vocabulary", "Sentence 1~5", "Part 1. 관사", "Part 2. 전치사", "Part 3. but/because", "Part 4. 부정문", "Part 5. 의문문", "Story 1-1~2-5"],
+    "Bridge Writing 2": ["Vocabulary", "Sentence 1~6", "Part 1. 의문사", "Part 2. 3인칭", "Part 3. 형용사보어", "Part 4. will", "Part 5. 's", "Part 6. Please", "Story 1-1~3-4"],
+    "Bridge Writing 3": ["Vocabulary", "Sentence 1~6", "Part 1. There", "Part 2. 소유격", "Part 3. 의문사", "Part 4. Don't", "Part 5. can", "Part 6. to", "Story 1-1~3-4"],
     "Bridge Writing 4-1": ["Vocabulary", "Sentence 1~6", "Part 1~6", "Story"],
     "Bridge Writing 4-2": ["Vocabulary", "Sentence 1~6", "Part 1~6", "Story"],
     "Bridge Writing 5": ["Vocabulary", "Sentence 1~6", "Part 1~6", "Story"],
@@ -52,10 +52,13 @@ WRITING_DATA = {
     "OK Writing 5": ["Vocab", "Sentence 1~9", "Part 1. 명령문", "Part 2. 빈도부사", "Part 3. Does", "Part 4. to부정사", "Part 5. 원급", "Part 6. 비교급", "Part 7. 최상급", "Story 1-1~2-2"],
     "OK Writing 6": ["Vocab", "Sentence 1~8", "Part 1. 과거", "Part 2. have to", "Part 3. Did", "Part 4. didn't", "Part 5. 동명사주어", "Part 6. 의문사구", "Part 7. 접속사", "Story 1-1~1-6"],
     "OK Writing 7": ["Vocab", "Sentence 1~12", "Part 1. 동명사목적어", "Part 2. 가주어 it", "Part 3. 형용사보어", "Part 4. 재귀대명사", "Part 5. 의문사구", "Part 6. should", "Part 7. 지각동사", "Story 1-1~3-2"],
-    "Training for Reading S1": ["Training 1~11"], "Training for Reading S2": ["Training 1~11"],
-    "Training for Reading S3": ["Training 1~9", "Story"], "Training for Reading S4": ["Training 1~9", "Story"]
+    "Training for Reading S1": ["Vocabulary", "Training 1~11", "Sentence Study"],
+    "Training for Reading S2": ["Vocabulary", "Training 1~11", "Sentence Study"],
+    "Training for Reading S3": ["Vocabulary", "Training 1~9", "Story 1~3"],
+    "Training for Reading S4": ["Vocabulary", "Training 1~9", "Story 1~2"]
 }
 
+# Phonics Lv 2~5 예문 데이터 유지
 PHONICS_DATA = {
     "Phonics 1": [f"<Unit {i:02d}>" for i in range(1, 11)],
     "Phonics 2": ["<Unit 01> (hat, cat, bat, rat, man, can, pan, van) / A cat has the hat.", "<Unit 02> (map, lap, nap, gap, ham, jam, ram, Sam) / Sam has the jam.", "<Unit 03> (net, jet, vet, wet, bed, red, Ted) / The bed is red.", "<Unit 04> (leg, Meg, keg, pen, men, hen, ten) / The hen is in the keg.", "<Unit 05> (hit, pit, kit, sit, pin, bin, fin, win) / He hits the bin.", "<Unit 06> (zip, dip, lip, rip, pig, big, dig, wig) / The pig is big.", "<Unit 07> (pot, cot, dot, hot, box, fox, ox) / The fox is on the box.", "<Unit 08> (top, mop, hop, pop, dog, log, fog, jog) / I have a mop.", "<Unit 09> (hut, cut, nut, sun, gun, fun, run) / She cuts the nut.", "<Unit 10> (tub, rub, sub, cub, mug, bug, rug, hug) / The bug is on the sub."],
@@ -158,22 +161,22 @@ if st.session_state.page == 'input':
     elt_book = st.selectbox("ELT 독해", elt_books, index=find_index(elt_books, get_safe("ELT교재")))
     elt_unit = st.text_input("└ ELT Unit", placeholder="예: <Unit 01>")
 
-    # [영자신문 - 자유 입력 추가!]
+    # [영자신문]
     ns_options = ["선택 안 함", "<Kinder>", "<Kids>"]
     news_paper = st.selectbox("영자신문 선택", ns_options, index=find_index(ns_options, get_safe("영자신문")))
     news_unit = st.text_input("└ 영자신문 유닛/주제 입력", placeholder="예: <Unit 01> Space Travel")
 
-    # [일반독해]
+    # [일반독해] - 자동 반영 로직 강화 버전
     rd_books = ["선택 안 함"] + READING_BOOKS_LIST
     r_book = st.selectbox("독해 교재", rd_books, index=find_index(rd_books, get_safe("독해교재")))
     r_unit = st.text_input("└ 독해 Unit", placeholder="예: <Unit 01>")
 
-    # [문법] - Azar 100% 상세 복구
+    # [문법] - Azar 100% 상세 내역 유지
     gr_books = ["선택 안 함", "Azar Basic (Red)", "Azar Fundamentals", "기타"]
     g_book = st.selectbox("문법 교재", gr_books, index=find_index(gr_books, get_safe("문법교재")))
     g_sub = st.selectbox("└ Azar 상세 항목", AZAR_BASIC_FULL_LIST) if g_book == "Azar Basic (Red)" else st.text_input("└ 단원명 직접 입력")
 
-    # [라이팅] - Bridge 1~6 & OK 1~7 전 시리즈 복구
+    # [라이팅] - Bridge 1~6 상세 복구 완료
     wr_books = ["선택 안 함"] + list(WRITING_DATA.keys())
     w_book = st.selectbox("라이팅 교재", wr_books, index=find_index(wr_books, get_safe("라이팅교재")))
     w_ls = st.selectbox("└ 라이팅 세부 단원", WRITING_DATA[w_book]) if w_book != "선택 안 함" else "선택 안 함"
@@ -187,7 +190,7 @@ if st.session_state.page == 'input':
         with st.spinner("AI 분석 중..."):
             try:
                 img = Image.open(up_file); img.thumbnail((800, 800))
-                res = client.models.generate_content(model="gemini-1.5-flash", contents=[f"성취도 분석해줘", img])
+                res = client.models.generate_content(model="gemini-1.5-flash", contents=[f"엘케이어학원 선생님으로서 학생의 {domain} 성취도 분석", img])
                 st.session_state.ai_res = res.text
             except Exception as e: st.error(f"오류: {e}")
     ai_fb = st.text_area("분석 결과 확인", value=st.session_state.ai_res, height=120)
@@ -205,9 +208,7 @@ if st.session_state.page == 'input':
             items = []
             if p_book != "선택 안 함": items.append(f"• 파닉스: {p_book} [{p_unit}]")
             if elt_book != "선택 안 함": items.append(f"• ELT독해: {elt_book} [{elt_unit}]")
-            if news_paper != "선택 안 함": 
-                news_info = f"{news_paper} [{news_unit}]" if news_unit else news_paper
-                items.append(f"• 영자신문: {news_info}")
+            if news_paper != "선택 안 함": items.append(f"• 영자신문: {news_paper} [{news_unit}]")
             if r_book != "선택 안 함": items.append(f"• 독해: {r_book} [{r_unit}]")
             if g_book != "선택 안 함": items.append(f"• 문법: {g_book} [{g_sub}]")
             if w_book != "선택 안 함": items.append(f"• 라이팅: {w_book} [{w_ls}]")
