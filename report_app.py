@@ -28,7 +28,7 @@ AZAR_BASIC_FULL_LIST = [
     "4-1 현재진행형 Be+-ing", "4-2 동사의 -ing", "4-3 현재진행 부정문", "4-4 현재진행 의문문", 
     "4-5 현재 vs 진행", "4-6 상태동사", "4-7 See/Look/Watch/Hear/Listen", "4-8 Think About vs That", "4-9 명령문",
     "5-1 명사 단수/복수", "5-2 불규칙 복수형", "5-3 형용사의 쓰임", "5-4 명사: 주어/목적어", 
-    "5-5 주격/목적격 대명사", "5-6 전치사+목격격 대명사", "5-7 소유형용사/대명사", "5-8 명사 소유격", "5-9 Whose 의문문", "5-10 소유격 불규칙 복수",
+    "5-5 주격/목적격 대명사", "5-6 전치사+목적격 대명사", "5-7 소유형용사/대명사", "5-8 명사 소유격", "5-9 Whose 의문문", "5-10 소유격 불규칙 복수",
     "6-1 셀 수 있는/없는 명사", "6-2 A vs An", "6-3 A/An vs Some", "6-4 물질명사 수량", 
     "6-5 Many/Much/Few/Little", "6-6 정관사 The", "6-7 관사 미사용", "6-8 Some/Any",
     "7-1 비인칭주어 It(시간)", "7-2 시간 전치사", "7-3 비인칭주어 It(날씨)", "7-4 There+Be동사", 
@@ -37,14 +37,7 @@ AZAR_BASIC_FULL_LIST = [
 
 # [라이팅] 상세 항목 복구 및 "스피킹&라이팅" 추가
 WRITING_DATA = {
-    # Basic Structure 상세 항목 복구 완료
-    "Basic Structure": [
-        "Unit 1. Nouns & Articles", "Unit 2. Pronouns", "Unit 3. Be-verbs (Present)", 
-        "Unit 4. General Verbs (Present)", "Unit 5. Present Continuous", "Unit 6. Be-verbs (Past)", 
-        "Unit 7. General Verbs (Past)", "Unit 8. Auxiliary Verbs", "Unit 9. Adjectives & Adverbs", 
-        "Unit 10. Prepositions", "Unit 11. Interrogatives", "Unit 12. Sentence Structures", 
-        "스피킹&라이팅"
-    ],
+    "Basic Structure": ["Unit 1. Nouns & Articles", "Unit 2. Pronouns", "Unit 3. Be-verbs (Present)", "Unit 4. General Verbs (Present)", "Unit 5. Present Continuous", "Unit 6. Be-verbs (Past)", "Unit 7. General Verbs (Past)", "Unit 8. Auxiliary Verbs", "Unit 9. Adjectives & Adverbs", "Unit 10. Prepositions", "Unit 11. Interrogatives", "Unit 12. Sentence Structures", "스피킹&라이팅"],
     "Bridge Writing 1": ["Vocabulary", "Sentence 1~5", "Part 1. 관사", "Part 2. 전치사", "Part 3. but/because", "Part 4. 부정문", "Part 5. 의문문", "Story 1-1~2-5", "스피킹&라이팅"],
     "Bridge Writing 2": ["Vocabulary", "Sentence 1~6", "Part 1. 의문사", "Part 2. 3인칭", "Part 3. 형용사보어", "Part 4. will", "Part 5. 's", "Part 6. Please", "Story 1-1~3-4", "스피킹&라이팅"],
     "Bridge Writing 3": ["Vocabulary", "Sentence 1~6", "Part 1. There", "Part 2. 소유격", "Part 3. 의문사", "Part 4. Don't", "Part 5. can", "Part 6. to", "Story 1-1~3-4", "스피킹&라이팅"],
@@ -62,7 +55,7 @@ WRITING_DATA = {
     "Training for Reading S1": ["Vocabulary", "Training 1. a/an/the+명사", "Training 2. 복수명사", "Training 3. 형용사+명사", "Training 4. 전치사+명사 (1)", "Training 5. 전치사+명사 (2)", "Training 6. 전치사+명사 (3)", "Training 7. 주인공+동작 (1)", "Training 8. 주인공+동작 (2)", "Training 9. 주인공+동작 (3)", "Training 10. 주인공+동작+대상 (1)", "Training 11. 주인공+동작+대상 (2)", "스피킹&라이팅"],
     "Training for Reading S2": ["Vocabulary", "Training 1. 주인공+be+명사 (1)", "Training 2. 주인공+be+명사 (2)", "Training 3. 주인공+be+형용사", "Training 4. 주인공+be+명사/형용사 (1)", "Training 5. 주인공+be+명사/형용사 (2)", "Training 6. 주인공+be+명사/형용사 (3)", "Training 7. 주인공+be+전치사+명사 (1)", "Training 8. 주인공+be+전치사+명사 (2)", "Training 9. 주인공+be+전치사+명사 (3)", "Training 10. 주인공+be+명사/형용사/전치사 (Review)", "Training 11. 명령문", "스피킹&라이팅"],
     "Training for Reading S3": ["Vocabulary", "Training 1. This/That+is+단수명사", "Training 2. This/That+is+소유격+명사 (1)", "Training 3. This/That+is+소유격+명사 (2)", "Training 4. 주인공과 대상이 ‘소유격+명사’", "Training 5. 주인공+동작+전치사+명사", "Training 6. 주인공+동작+대상+전치사+명사", "Training 7. 명령문: 동작+(대상)+전치사+명사", "Training 8. 주인공+be+~ing+(대상)", "Training 9. 주인공+be+~ing+(대상)+전치사+명사", "Story 1-1", "Story 1-2", "Story 1-3", "Story 2", "Story 3", "스피킹&라이팅"],
-    "Training for Reading S4": ["Vocabulary", "Training 1. 주인공+동작+대상(대명사)", "Training 2. 명사 and 명사", "Training 3. 형용사 and 형용사", "Training 4. 문장 and 문장", "Training 5. Because 주인공+동작", "Training 6. 주인공+동작+(대상)+부사", "Training 7. 부사+형용사", "Training 8. 부사+부사", "Training 9. 부사의 다양한 위치", "Story 1-1", "Story 1-2", "Story 1-3", "Story 2-1", "Story 2-2", "스피킹&라이팅"]
+    "Training for Reading S4": ["Vocabulary", "Training 1. 주인공+동작+대상(대명사)", "Training 2. 명사 and 명사", "Training 3. 형용사 and 형용사", "Training 4. 문장 and 명사", "Training 5. Because 주인공+동작", "Training 6. 주인공+동작+(대상)+부사", "Training 7. 부사+형용사", "Training 8. 부사+부사", "Training 9. 부사의 다양한 위치", "Story 1-1", "Story 1-2", "Story 1-3", "Story 2-1", "Story 2-2", "스피킹&라이팅"]
 }
 
 PHONICS_DATA = {
@@ -73,7 +66,8 @@ PHONICS_DATA = {
     "Phonics 5": ["<Unit 01> (tail, snail, train, chain, play, tray, clay, spray) / He plays with clay.", "<Unit 02> (bee, seed, tree, tea, meat, leaf, key, honey, money) / The key is old.", "<Unit 03> (die, pie, tie, find, kind, blind, Birdie, fight, night) / He is very kind.", "<Unit 04> (boat, coat, soap, road, grow, blow, crow, snow) / A crow blows the soap boat.", "<Unit 05> (new, chew, stew, blue, clue, glue, room, spoon, moon) / He finds the clue.", "<Unit 06> (paw, draw, straw, head, bread, thread, book, foot, look) / Draw the paw now.", "<Unit 07> (house, mouse, brown, clown, oil, soil, boy, toy) / A mouse lives in the house.", "<Unit 08> (baby, study, cloudy, cherry, cry, dry, fly, sky) / They cry with the baby.", "<Unit 09> (car, arm, star, shark, corn, fork, store, horse) / A horse eats corn.", "<Unit 10> (nurse, purse, burn, bird, girl, skirt, mother, teacher, farmer) / The girl wears a skirt and a purse."]
 }
 
-V_BOOKS_LIST = ["능률 보카 기본 400", "능률 보카 필수 500", "[개정]교육청 초등어휘 900", "보카클리어 중학기본", "보카클리어 중학실력", "보카클리어 중학완성", "워드마스터 고등기본", "보카익스프레스[중등]", "기타"]
+# 어휘 교재 (선택 안 함 옵션 추가)
+V_BOOKS_LIST = ["선택 안 함", "능률 보카 기본 400", "능률 보카 필수 500", "[개정]교육청 초등어휘 900", "보카클리어 중학기본", "보카클리어 중학실력", "보카클리어 중학완성", "워드마스터 고등기본", "보카익스프레스[중등]", "기타"]
 ELT_BOOKS = ["30 Word Reading(1)", "30 Word Reading(2)", "40 Word Reading(1)", "40 Word Reading(2)", "40 Read it(1)", "40 Read it(2)", "40 Read it(3)", "60 Read it(1)", "60 Read it(2)", "60 Read it(3)"]
 READING_BOOKS_LIST = ["리딩튜터 스타터(1)", "리딩튜터 스타터(2)", "리딩튜터 스타터(3)", "리딩튜터 주니어(1)", "리딩튜터 주니어(2)", "리딩튜터 주니어(3)", "리딩튜터 주니어(4)", "수능토픽(레벨1)", "수능토픽(레벨2)", "수능토픽(레벨3)", "자체 독해 자료"]
 
@@ -187,7 +181,7 @@ if st.session_state.page == 'input':
     g_sub = st.selectbox("└ Azar 상세 항목", AZAR_BASIC_FULL_LIST) if g_book == "Azar Basic (Red)" else st.text_input("└ 단원명 직접 입력")
     g_hw = st.checkbox("과제X (문법)", key="g_hw")
 
-    # [라이팅] - Basic Structure 복구 완료
+    # [라이팅]
     wr_books = ["선택 안 함"] + list(WRITING_DATA.keys())
     w_book = st.selectbox("라이팅 교재", wr_books, index=find_index(wr_books, get_safe("라이팅교재")))
     w_ls = st.selectbox("└ 라이팅 세부 단원", WRITING_DATA[w_book]) if w_book != "선택 안 함" else "선택 안 함"
@@ -214,9 +208,14 @@ if st.session_state.page == 'input':
         else:
             display_class = f"{class_name} " if class_name != "선택 없음" else ""
             target_info = f"{grade} {display_class}{name} 학생"
-            v_results = [f"• 1회차: {v1_c} / {v1_t} ({int((v1_c/v1_t)*100)}%)"]
-            if v2_c > 0: v_results.append(f"• 2회차: {v2_c} / {v2_t}")
-            if v3_c > 0: v_results.append(f"• 3회차: {v3_c} / {v3_t}")
+            
+            # [어휘 섹션 조건부 생성]
+            v_section_text = ""
+            if v_book != "선택 안 함":
+                v_results = [f"• 1회차: {v1_c} / {v1_t} ({int((v1_c/v1_t)*100)}%)"]
+                if v2_c > 0: v_results.append(f"• 2회차: {v2_c} / {v2_t}")
+                if v3_c > 0: v_results.append(f"• 3회차: {v3_c} / {v3_t}")
+                v_section_text = f"1. 어휘 테스트 결과\n- 교재명: {v_book} ({v_unit})\n" + "\n".join(v_results) + "\n\n"
             
             items = []
             if p_book != "선택 안 함": items.append(f"• 파닉스: {p_book} [{p_unit}]" + (" (과제X)" if p_hw else ""))
@@ -228,7 +227,7 @@ if st.session_state.page == 'input':
             if g_book != "선택 안 함": items.append(f"• 문법: {g_book} [{g_sub}]" + (" (과제X)" if g_hw else ""))
             if w_book != "선택 안 함": items.append(f"• 라이팅: {w_book} [{w_ls}]" + (" (과제X)" if w_hw else ""))
             
-            report_text = f"[ 엘케이어학원 학습 리포트 ]\n\n■ 대상: {target_info}\n■ 학습일: {report_date}\n\n1. 어휘 테스트 결과\n- 교재명: {v_book} ({v_unit})\n" + "\n".join(v_results) + f"\n\n2. 주교재 학습 내용\n" + "\n".join(items) + f"\n\n[선생님 피드백]\n{content}\n\n[과제 정밀 분석 - {domain}]\n{ai_fb}\n\n3. 과제 수행도: {hw_status}"
+            report_text = f"[ 엘케이어학원 학습 리포트 ]\n\n■ 대상: {target_info}\n■ 학습일: {report_date}\n\n{v_section_text}2. 주교재 학습 내용\n" + "\n".join(items) + f"\n\n[선생님 피드백]\n{content}\n\n[과제 정밀 분석 - {domain}]\n{ai_fb}\n\n3. 과제 수행도: {hw_status}"
             st.session_state.final_text = report_text
             st.session_state.page = 'result'; st.rerun()
 
