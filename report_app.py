@@ -16,7 +16,7 @@ else:
 
 # --- [상세 커리큘럼 데이터 정의 - 절대 요약 금지] ---
 
-# [문법] Azar Basic (Red) 전체 세부 항목 (1-1 ~ 7-10)
+# [문법] Azar Basic (Red) 전체 세부 항목 복구 (1-1 ~ 7-10)
 AZAR_BASIC_FULL_LIST = [
     "1-1 단수 인칭대명사+Be동사", "1-2 복수 인칭대명사+Be동사", "1-3 단수 명사+Be동사", "1-4 복수 명사+Be동사", 
     "1-5 인칭대명사+Be동사 축약", "1-6 Be동사 부정문", "1-7 Be동사+형용사", "1-8 Be동사+장소", "1-9 Be동사 구조 요약",
@@ -35,7 +35,7 @@ AZAR_BASIC_FULL_LIST = [
     "7-5 There+Be동사 의문문", "7-6 How Many 의문문", "7-7 장소 전치사", "7-8 위치 전치사", "7-9 Would Like", "7-10 Would Like vs Like"
 ]
 
-# [라이팅] 전 교재 상세 항목 복구 및 "스피킹&라이팅" 추가
+# [라이팅] 전 시리즈 상세 항목 복구 및 "스피킹&라이팅" 추가
 WRITING_DATA = {
     "Basic Structure": [f"Unit {i}" for i in range(1, 13)] + ["스피킹&라이팅"],
     "Bridge Writing 1": ["Vocabulary", "Sentence 1~5", "Part 1. 관사", "Part 2. 전치사", "Part 3. but/because", "Part 4. 부정문", "Part 5. 의문문", "Story 1-1~2-5", "스피킹&라이팅"],
@@ -58,7 +58,6 @@ WRITING_DATA = {
     "Training for Reading S4": ["Vocabulary", "Training 1. 주인공+동작+대상(대명사)", "Training 2. 명사 and 명사", "Training 3. 형용사 and 형용사", "Training 4. 문장 and 문장", "Training 5. Because 주인공+동작", "Training 6. 주인공+동작+(대상)+부사", "Training 7. 부사+형용사", "Training 8. 부사+부사", "Training 9. 부사의 다양한 위치", "Story 1-1", "Story 1-2", "Story 1-3", "Story 2-1", "Story 2-2", "스피킹&라이팅"]
 }
 
-# Phonics Lv 2~5 예문 데이터 유지
 PHONICS_DATA = {
     "Phonics 1": [f"<Unit {i:02d}>" for i in range(1, 11)],
     "Phonics 2": ["<Unit 01> (hat, cat, bat, rat, man, can, pan, van) / A cat has the hat.", "<Unit 02> (map, lap, nap, gap, ham, jam, ram, Sam) / Sam has the jam.", "<Unit 03> (net, jet, vet, wet, bed, red, Ted) / The bed is red.", "<Unit 04> (leg, Meg, keg, pen, men, hen, ten) / The hen is in the keg.", "<Unit 05> (hit, pit, kit, sit, pin, bin, fin, win) / He hits the bin.", "<Unit 06> (zip, dip, lip, rip, pig, big, dig, wig) / The pig is big.", "<Unit 07> (pot, cot, dot, hot, box, fox, ox) / The fox is on the box.", "<Unit 08> (top, mop, hop, pop, dog, log, fog, jog) / I have a mop.", "<Unit 09> (hut, cut, nut, sun, gun, fun, run) / She cuts the nut.", "<Unit 10> (tub, rub, sub, cub, mug, bug, rug, hug) / The bug is on the sub."],
@@ -100,13 +99,13 @@ if st.session_state.page == 'input':
 
     if os.path.exists(AUTO_FILE):
         df = load_excel_data(AUTO_FILE)
-        if df is not None: st.success(f"✅ 명단 자동 불러오기 완료")
+        if df is not None: st.success(f"✅ 명단 자동 로드 완료")
     
-    with st.expander("📂 학생 명단 관리 (엑셀)", expanded=(df is None)):
+    with st.expander("📂 명단 관리 (엑셀)", expanded=(df is None)):
         uploaded_excel = st.file_uploader("xlsx 파일을 업로드하세요", type=['xlsx'])
         if uploaded_excel:
             df = load_excel_data(uploaded_excel)
-            if df is not None: st.success("새 데이터를 읽었습니다!")
+            if df is not None: st.success("새 파일을 읽었습니다!")
 
     if df is not None:
         sel_student = st.selectbox("학생 선택", ["선택 안 함"] + list(df['이름'].unique()))
@@ -155,42 +154,48 @@ if st.session_state.page == 'input':
     p_books = ["선택 안 함"] + list(PHONICS_DATA.keys())
     p_book = st.selectbox("파닉스 교재", p_books, index=find_index(p_books, get_safe("파닉스교재")))
     p_unit = st.selectbox("└ 파닉스 Unit", PHONICS_DATA[p_book]) if p_book != "선택 안 함" else "선택 안 함"
+    p_hw = st.checkbox("과제X (파닉스)", key="p_hw")
 
     # [ELT]
     elt_books = ["선택 안 함"] + ELT_BOOKS
     elt_book = st.selectbox("ELT 독해", elt_books, index=find_index(elt_books, get_safe("ELT교재")))
     elt_unit = st.text_input("└ ELT Unit", placeholder="예: <Unit 01>")
+    elt_hw = st.checkbox("과제X (ELT)", key="elt_hw")
 
     # [영자신문]
     ns_options = ["선택 안 함", "<Kinder>", "<Kids>"]
     news_paper = st.selectbox("영자신문 선택", ns_options, index=find_index(ns_options, get_safe("영자신문")))
-    news_unit = st.text_input("└ 영자신문 유닛/주제 입력", placeholder="예: <Unit 01> Space Travel")
+    news_unit = st.text_input("└ 영자신문 주제 입력", placeholder="예: <Unit 01> Space Travel")
+    news_hw = st.checkbox("과제X (영자신문)", key="news_hw")
 
     # [일반독해]
     rd_books = ["선택 안 함"] + READING_BOOKS_LIST
     r_book = st.selectbox("독해 교재", rd_books, index=find_index(rd_books, get_safe("독해교재")))
     r_unit = st.text_input("└ 독해 Unit", placeholder="예: <Unit 01>")
+    r_hw = st.checkbox("과제X (독해)", key="r_hw")
 
-    # [문법] - Azar 상세 항목 보존
+    # [문법]
     gr_books = ["선택 안 함", "Azar Basic (Red)", "Azar Fundamentals", "기타"]
     g_book = st.selectbox("문법 교재", gr_books, index=find_index(gr_books, get_safe("문법교재")))
     g_sub = st.selectbox("└ Azar 상세 항목", AZAR_BASIC_FULL_LIST) if g_book == "Azar Basic (Red)" else st.text_input("└ 단원명 직접 입력")
+    g_hw = st.checkbox("과제X (문법)", key="g_hw")
 
-    # [라이팅] - 복구 및 "스피킹&라이팅" 추가
+    # [라이팅]
     wr_books = ["선택 안 함"] + list(WRITING_DATA.keys())
     w_book = st.selectbox("라이팅 교재", wr_books, index=find_index(wr_books, get_safe("라이팅교재")))
     w_ls = st.selectbox("└ 라이팅 세부 단원", WRITING_DATA[w_book]) if w_book != "선택 안 함" else "선택 안 함"
+    w_hw = st.checkbox("과제X (라이팅)", key="w_hw")
 
     st.divider()
 
-    # 4. 과제 분석 & 5. 총평
+    # 4. 분석 & 5. 총평
     up_file = st.file_uploader("과제 사진 업로드", type=['jpg', 'png'])
     domain = st.selectbox("분석 영역", ["선택 안 함", "문법", "어휘", "독해", "라이팅"])
     if st.button("🤖 과제 분석 시작") and up_file and domain != "선택 안 함":
         with st.spinner("AI 분석 중..."):
             try:
                 img = Image.open(up_file); img.thumbnail((800, 800))
-                res = client.models.generate_content(model="gemini-1.5-flash", contents=[f"엘케이어학원 선생님으로서 학생의 {domain} 성취도 분석", img])
+                res = client.models.generate_content(model="gemini-1.5-flash", contents=[f"성취도 분석해줘", img])
                 st.session_state.ai_res = res.text
             except Exception as e: st.error(f"오류: {e}")
     ai_fb = st.text_area("분석 결과 확인", value=st.session_state.ai_res, height=120)
@@ -205,13 +210,17 @@ if st.session_state.page == 'input':
             v_results = [f"• 1회차: {v1_c} / {v1_t} ({int((v1_c/v1_t)*100)}%)"]
             if v2_c > 0: v_results.append(f"• 2회차: {v2_c} / {v2_t}")
             if v3_c > 0: v_results.append(f"• 3회차: {v3_c} / {v3_t}")
+            
             items = []
-            if p_book != "선택 안 함": items.append(f"• 파닉스: {p_book} [{p_unit}]")
-            if elt_book != "선택 안 함": items.append(f"• ELT독해: {elt_book} [{elt_unit}]")
-            if news_paper != "선택 안 함": items.append(f"• 영자신문: {news_paper} [{news_unit}]")
-            if r_book != "선택 안 함": items.append(f"• 독해: {r_book} [{r_unit}]")
-            if g_book != "선택 안 함": items.append(f"• 문법: {g_book} [{g_sub}]")
-            if w_book != "선택 안 함": items.append(f"• 라이팅: {w_book} [{w_ls}]")
+            if p_book != "선택 안 함": items.append(f"• 파닉스: {p_book} [{p_unit}]" + (" (과제X)" if p_hw else ""))
+            if elt_book != "선택 안 함": items.append(f"• ELT독해: {elt_book} [{elt_unit}]" + (" (과제X)" if elt_hw else ""))
+            if news_paper != "선택 안 함": 
+                news_info = f"{news_paper} [{news_unit}]" if news_unit else news_paper
+                items.append(f"• 영자신문: {news_info}" + (" (과제X)" if news_hw else ""))
+            if r_book != "선택 안 함": items.append(f"• 독해: {r_book} [{r_unit}]" + (" (과제X)" if r_hw else ""))
+            if g_book != "선택 안 함": items.append(f"• 문법: {g_book} [{g_sub}]" + (" (과제X)" if g_hw else ""))
+            if w_book != "선택 안 함": items.append(f"• 라이팅: {w_book} [{w_ls}]" + (" (과제X)" if w_hw else ""))
+            
             report_text = f"[ 엘케이어학원 학습 리포트 ]\n\n■ 대상: {target_info}\n■ 학습일: {report_date}\n\n1. 어휘 테스트 결과\n- 교재명: {v_book} ({v_unit})\n" + "\n".join(v_results) + f"\n\n2. 주교재 학습 내용\n" + "\n".join(items) + f"\n\n[선생님 피드백]\n{content}\n\n[과제 정밀 분석 - {domain}]\n{ai_fb}\n\n3. 과제 수행도: {hw_status}"
             st.session_state.final_text = report_text
             st.session_state.page = 'result'; st.rerun()
