@@ -8,7 +8,7 @@ from google import genai
 # 1. 페이지 설정
 st.set_page_config(page_title="엘케이어학원 학습 리포트", layout="centered")
 
-# 2. 클라이언트 설정 (과제 정밀 분석용)
+# 2. 클라이언트 설정
 if "gemini_api_key" in st.secrets:
     client = genai.Client(api_key=st.secrets["gemini_api_key"])
 else:
@@ -16,7 +16,7 @@ else:
 
 # --- [상세 커리큘럼 데이터 정의] ---
 
-# Phonics 상세 데이터
+# Phonics 데이터 (Lv 2~5 이미지 분석 결과 반영)
 PHONICS_DATA = {
     "Phonics 1": [f"<Unit {i:02d}>" for i in range(1, 11)],
     "Phonics 2": ["<Unit 01> (hat, cat, bat, rat, man, can, pan, van) / A cat has the hat.", "<Unit 02> (map, lap, nap, gap, ham, jam, ram, Sam) / Sam has the jam.", "<Unit 03> (net, jet, vet, wet, bed, red, Ted) / The bed is red.", "<Unit 04> (leg, Meg, keg, pen, men, hen, ten) / The hen is in the keg.", "<Unit 05> (hit, pit, kit, sit, pin, bin, fin, win) / He hits the bin.", "<Unit 06> (zip, dip, lip, rip, pig, big, dig, wig) / The pig is big.", "<Unit 07> (pot, cot, dot, hot, box, fox, ox) / The fox is on the box.", "<Unit 08> (top, mop, hop, pop, dog, log, fog, jog) / I have a mop.", "<Unit 09> (hut, cut, nut, sun, gun, fun, run) / She cuts the nut.", "<Unit 10> (tub, rub, sub, cub, mug, bug, rug, hug) / The bug is on the sub."],
@@ -28,28 +28,29 @@ PHONICS_DATA = {
 V_BOOKS_LIST = ["능률 보카 기본 400", "능률 보카 필수 500", "[개정]교육청 초등어휘 900", "보카클리어 중학기본", "보카클리어 중학실력", "보카클리어 중학완성", "워드마스터 고등기본", "보카익스프레스[중등]", "기타"]
 ELT_BOOKS = ["30 Word Reading(1)", "30 Word Reading(2)", "40 Word Reading(1)", "40 Word Reading(2)", "40 Read it(1)", "40 Read it(2)", "40 Read it(3)", "60 Read it(1)", "60 Read it(2)", "60 Read it(3)"]
 READING_BOOKS_LIST = ["리딩튜터 스타터(1)", "리딩튜터 스타터(2)", "리딩튜터 스타터(3)", "리딩튜터 주니어(1)", "리딩튜터 주니어(2)", "리딩튜터 주니어(3)", "리딩튜터 주니어(4)", "수능토픽(레벨1)", "수능토픽(레벨2)", "수능토픽(레벨3)", "자체 독해 자료"]
-AZAR_BASIC_FULL_LIST = ["1-1 단수 인칭대명사+Be동사", "1-2 복수 인칭대명사+Be동사", "1-3 단수 명사+Be동사", "1-4 복수 명사+Be동사", "1-5 인칭대명사+Be동사 축약", "1-6 Be동사 부정문", "1-7 Be동사+형용사", "1-8 Be동사+장소", "1-9 Be동사 구조 요약", "2-1 This/That", "2-2 These/Those", "2-3 Be동사 Yes/No 의문문", "2-4 의문문 대답", "2-5 Where 의문문", "2-6 Have/Has", "2-7 소유격 인칭대명사", "2-8 What/Who 의문문", "3-1 현재시제 형태/의미", "3-2 빈도부사", "3-3 빈도부사 위치", "3-4 3인칭 단수 -es", "3-5 3인칭 단수 -y", "3-6 Has, Does, Goes", "3-7 Like/Want/Need/Would Like", "3-8 현재시제 부정문", "3-9 Yes/No 의문문", "3-10 Where/What 의문문", "3-11 When/What Time 의문문", "4-1 현재진행형 Be+-ing", "4-2 동사의 -ing", "4-3 현재진행 부정문", "4-4 현재진행 의문문", "4-5 현재 vs 진행", "4-6 상태동사", "4-7 See/Look/Watch/Hear/Listen", "4-8 Think About vs That", "4-9 명령문", "5-1 명사 단수/복수", "5-2 불규칙 복수형", "5-3 형용사의 쓰임", "5-4 명사: 주어/목적어", "5-5 주격/목적격 대명사", "5-6 전치사+목적격 대명사", "5-7 소유형용사/대명사", "5-8 명사 소유격", "5-9 Whose 의문문", "5-10 소유격 불규칙 복수", "6-1 셀 수 있는/없는 명사", "6-2 A vs An", "6-3 A/An vs Some", "6-4 물질명사 수량", "6-5 Many/Much/Few/Little", "6-6 정관사 The", "6-7 관사 미사용", "6-8 Some/Any", "7-1 비인칭주어 It(시간)", "7-2 시간 전치사", "7-3 비인칭주어 It(날씨)", "7-4 There+Be동사", "7-5 There+Be동사 의문문", "7-6 How Many 의문문", "7-7 장소 전치사", "7-8 위치 전치사", "7-9 Would Like", "7-10 Would Like vs Like"]
+AZAR_BASIC_FULL_LIST = ["1-1 Be동사", "1-2 ~ 1-9 구조", "2-1 ~ 2-8 의문사", "3-1 ~ 3-11 현재시제", "4-1 ~ 4-9 진행형", "5-1 ~ 5-10 명사/대명사", "6-1 ~ 6-8 관사/수량", "7-1 ~ 7-10 There is/날씨"]
 
-# [라이팅] Basic Structure 추가 및 기존 데이터 통합
+# [수정] 라이팅 교재 구성 (Bridge 1~6, OK 1~7 완벽 반영)
 WRITING_DATA = {
-    "Basic Structure 1": [f"Unit {i}" for i in range(1, 13)], # Basic Structure 1권 추가
-    "Basic Structure 2": [f"Unit {i}" for i in range(1, 13)], # Basic Structure 2권 추가
-    "Basic Structure 3": [f"Unit {i}" for i in range(1, 13)], # Basic Structure 3권 추가
-    "OK Writing 1": ["Vocab", "Sentence 1~6", "Part 1. 전치사", "Part 2. 진행형", "Part 3. 부정문", "Part 4. and/because", "Part 5. 명령문", "Story 1-1~3-4"],
-    "OK Writing 2": ["Vocab", "Sentence 1~6", "Part 1. 소유격", "Part 2. There is/are", "Part 3. but/because", "Part 4. 대상 2개", "Part 5. 의문문", "Part 6. look+형용사", "Part 7. don't", "Story 1-1~3-4"],
-    "OK Writing 3": ["Vocab", "Sentence 1~9", "Part 1. of", "Part 2. to부정사", "Part 3. can", "Part 4. 비인칭", "Part 5. Let's", "Part 6. 3인칭단수", "Part 7. doesn't", "Story 1-1~3-5"],
-    "OK Writing 4": ["Vocab", "Sentence 1~7", "Part 1. will", "Part 2. must", "Part 3. to부정사", "Part 4. that절", "Part 5. Do", "Part 6. 의문사", "Story 1-1~2-4"],
-    "OK Writing 5": ["Vocab", "Sentence 1~9", "Part 1. 명령문", "Part 2. 빈도부사", "Part 3. Does", "Part 4. to부정사", "Part 5. 원급", "Part 6. 비교급", "Part 7. 최상급", "Story 1-1~2-2"],
-    "OK Writing 6": ["Vocab", "Sentence 1~8", "Part 1. 과거", "Part 2. have to", "Part 3. Did", "Part 4. didn't", "Part 5. 동명사주어", "Part 6. 의문사구", "Part 7. 접속사", "Story 1-1~1-6"],
-    "OK Writing 7": ["Vocab", "Sentence 1~12", "Part 1. 동명사목적어", "Part 2. 가주어 it", "Part 3. 형용사보어", "Part 4. 재귀대명사", "Part 5. 의문사구", "Part 6. should", "Part 7. 지각동사", "Story 1-1~3-2"],
-    "Bridge Writing Starter": ["Vocabulary", "Sentence 1~3", "Part 1. 복수", "Part 2. 소유격", "Part 3. 진행형", "Part 4. but", "Part 5. 명령문", "Story 1-1~3-3"],
-    "Bridge Writing 1": ["Vocabulary", "Sentence 1~5", "Part 1. 관사", "Part 2. 전치사", "Part 3. but/because", "Part 4. 부정문", "Part 5. 의문문", "Story 1-1~2-5"],
-    "Bridge Writing 2": ["Vocabulary", "Sentence 1~6", "Part 1. 의문사", "Part 2. 3인칭", "Part 3. 형용사보어", "Part 4. will", "Part 5. 's", "Part 6. Please", "Story 1-1~3-4"],
-    "Bridge Writing 3": ["Vocabulary", "Sentence 1~6", "Part 1. There", "Part 2. 소유격", "Part 3. 의문사", "Part 4. Don't", "Part 5. can", "Part 6. to", "Story 1-1~3-4"],
-    "Training for Reading S1": ["Vocabulary", "Training 1. a/an/the+명사", "Training 2. 복수명사", "Training 3. 형용사+명사", "Training 4. 전치사+명사", "Training 10. 주인공+동작+대상"],
-    "Training for Reading S2": ["Vocabulary", "Training 1. 주인공+be+명사", "Training 10. 주인공+be+명사/형용사/전치사 (Review)", "Training 11. 명령문"],
-    "Training for Reading S3": ["Vocabulary", "Training 1~4. 소유격+명사", "Story 1-1~3"],
-    "Training for Reading S4": ["Vocabulary", "Training 1~4. 접속사 and/Because", "부사 위치", "Story 1-1~2-2"]
+    "Basic Structure": [f"Unit {i}" for i in range(1, 13)],
+    "OK Writing 1": ["Vocab", "Part 1. 전치사", "Part 2. 진행형", "Part 3. 부정문", "Part 4. and/because", "Story"],
+    "OK Writing 2": ["Vocab", "Part 1. 소유격", "Part 2. There is/are", "Part 3. but/because", "Story"],
+    "OK Writing 3": ["Vocab", "Part 1. of", "Part 2. to부정사", "Part 3. can", "Part 4. 비인칭", "Story"],
+    "OK Writing 4": ["Vocab", "Part 1. will", "Part 2. must", "Part 3. to부정사", "Part 4. that절", "Story"],
+    "OK Writing 5": ["Vocab", "Part 1. 명령문", "Part 2. 빈도부사", "Part 3. Does", "Part 4. 원급/비교급", "Story"],
+    "OK Writing 6": ["Vocab", "Part 1. 과거", "Part 2. have to", "Part 3. Did/Didn't", "Part 4. 동명사", "Story"],
+    "OK Writing 7": ["Vocab", "Part 1. 동명사", "Part 2. 가주어 it", "Part 3. 재귀대명사", "Part 4. 지각동사", "Story"],
+    "Bridge Writing 1": ["Vocabulary", "Sentence 1~5", "Part 1~5", "Story 1-1~2-5"],
+    "Bridge Writing 2": ["Vocabulary", "Sentence 1~6", "Part 1~6", "Story 1-1~3-4"],
+    "Bridge Writing 3": ["Vocabulary", "Sentence 1~6", "Part 1~6", "Story 1-1~3-4"],
+    "Bridge Writing 4-1": ["Vocabulary", "Sentence 1~6", "Part 1~6", "Story"],
+    "Bridge Writing 4-2": ["Vocabulary", "Sentence 1~6", "Part 1~6", "Story"],
+    "Bridge Writing 5": ["Vocabulary", "Sentence 1~6", "Part 1~6", "Story"],
+    "Bridge Writing 6": ["Vocabulary", "Sentence 1~6", "Part 1~6", "Story"],
+    "Training for Reading S1": ["Training 1~11"],
+    "Training for Reading S2": ["Training 1~11"],
+    "Training for Reading S3": ["Training 1~9", "Story"],
+    "Training for Reading S4": ["Training 1~9", "Story"]
 }
 
 # --- [기능 함수] ---
@@ -62,6 +63,16 @@ def load_excel_data(file_path):
             df.columns = [str(c).strip().replace(" ", "") for c in df.columns]
         return df
     except: return None
+
+# [신규] 유연한 자동 반영을 위한 인덱스 찾기 함수
+def find_index(options_list, target_value):
+    if not target_value or str(target_value).lower() == 'nan':
+        return 0
+    target_clean = str(target_value).strip().replace(" ", "")
+    for i, opt in enumerate(options_list):
+        if str(opt).strip().replace(" ", "") == target_clean:
+            return i
+    return 0
 
 # --- [메인 로직] ---
 if "page" not in st.session_state: st.session_state.page = 'input'
@@ -76,10 +87,10 @@ if st.session_state.page == 'input':
 
     if os.path.exists(AUTO_FILE):
         df = load_excel_data(AUTO_FILE)
-        if df is not None: st.success(f"✅ '{AUTO_FILE}'에서 명단을 자동으로 불러왔습니다.")
+        if df is not None: st.success(f"✅ 명단 자동 로드 완료")
     
-    with st.expander("📂 학생 명단 수동 업데이트 (필요시)", expanded=(df is None)):
-        uploaded_excel = st.file_uploader("명단 파일을 드래그하세요", type=['xlsx'])
+    with st.expander("📂 명단 수동 업데이트 (필요시)", expanded=(df is None)):
+        uploaded_excel = st.file_uploader("xlsx 파일을 올리세요", type=['xlsx'])
         if uploaded_excel:
             df = load_excel_data(uploaded_excel)
             if df is not None: st.success("새 파일을 읽었습니다!")
@@ -101,9 +112,10 @@ if st.session_state.page == 'input':
     # 1. 기본 정보
     report_date = st.date_input("학습일 선택", value=datetime.today())
     c1, c2, c3 = st.columns(3)
-    grade = c1.selectbox("학년", ["초등", "중등", "고등"], index=["초등", "중등", "고등"].index(v) if (v:=get_safe("학년")) in ["초등", "중등", "고등"] else 0)
+    grade_opts = ["초등", "중등", "고등"]
+    grade = c1.selectbox("학년", grade_opts, index=find_index(grade_opts, get_safe("학년")))
     class_list = ["선택 없음", "Beginner-2시", "Beginner-3시", "Ph1", "Inter 2시", "G-Advanced 2시"]
-    class_name = c2.selectbox("반 선택", class_list, index=class_list.index(v) if (v:=get_safe("반")) in class_list else 0)
+    class_name = c2.selectbox("반 선택", class_list, index=find_index(class_list, get_safe("반")))
     name = st.text_input("학생 이름", value=get_safe("이름"))
 
     st.divider()
@@ -111,8 +123,7 @@ if st.session_state.page == 'input':
     # 2. 어휘 섹션
     st.subheader("🅰️ 2. 어휘 (Vocabulary)")
     vc1, vc2 = st.columns([2, 1])
-    v_def_idx = V_BOOKS_LIST.index(v) if (v:=get_safe("어휘교재")) in V_BOOKS_LIST else 0
-    v_book = vc1.selectbox("어휘 교재", V_BOOKS_LIST, index=v_def_idx)
+    v_book = vc1.selectbox("어휘 교재", V_BOOKS_LIST, index=find_index(V_BOOKS_LIST, get_safe("어휘교재")))
     v_unit = vc2.text_input("어휘 Unit", placeholder="예: <Unit 01>")
     
     r1, r2, r3 = st.columns(3)
@@ -130,44 +141,43 @@ if st.session_state.page == 'input':
     
     # [파닉스]
     p_books = ["선택 안 함"] + list(PHONICS_DATA.keys())
-    p_book = st.selectbox("파닉스 교재", p_books, index=p_books.index(v) if (v:=get_safe("파닉스교재")) in p_books else 0)
-    p_unit = st.selectbox("└ 파닉스 Unit 선택", PHONICS_DATA[p_book]) if p_book != "선택 안 함" else "선택 안 함"
+    p_book = st.selectbox("파닉스 교재", p_books, index=find_index(p_books, get_safe("파닉스교재")))
+    p_unit = st.selectbox("└ 파닉스 Unit", PHONICS_DATA[p_book]) if p_book != "선택 안 함" else "선택 안 함"
 
     # [ELT]
     elt_books = ["선택 안 함"] + ELT_BOOKS
-    elt_book = st.selectbox("ELT 독해", elt_books, index=elt_books.index(v) if (v:=get_safe("ELT교재")) in elt_books else 0)
+    elt_book = st.selectbox("ELT 독해", elt_books, index=find_index(elt_books, get_safe("ELT교재")))
     elt_unit = st.text_input("└ ELT Unit", placeholder="예: <Unit 01>")
 
     # [영자신문]
     ns_options = ["선택 안 함", "<Kinder>", "<Kids>"]
-    news_paper = st.selectbox("영자신문", ns_options, index=ns_options.index(v) if (v:=get_safe("영자신문")) in ns_options else 0)
+    news_paper = st.selectbox("영자신문", ns_options, index=find_index(ns_options, get_safe("영자신문")))
 
-    # [일반독해]
+    # [일반독해] - [해결!] 자동 반영 로직 강화
     rd_books = ["선택 안 함"] + READING_BOOKS_LIST
-    r_book = st.selectbox("독해 교재", rd_books, index=rd_books.index(v) if (v:=get_safe("독해교재")) in rd_books else 0)
+    r_book = st.selectbox("독해 교재", rd_books, index=find_index(rd_books, get_safe("독해교재")))
     r_unit = st.text_input("└ 독해 Unit", placeholder="예: <Unit 01>")
 
     # [문법]
     gr_books = ["선택 안 함", "Azar Basic (Red)", "Azar Fundamentals", "기타"]
-    g_book = st.selectbox("문법 교재", gr_books, index=gr_books.index(v) if (v:=get_safe("문법교재")) in gr_books else 0)
+    g_book = st.selectbox("문법 교재", gr_books, index=find_index(gr_books, get_safe("문법교재")))
     g_sub = st.selectbox("└ Azar 세부 항목", AZAR_BASIC_FULL_LIST) if g_book == "Azar Basic (Red)" else st.text_input("└ 단원명 직접 입력")
 
-    # [라이팅] - Basic Structure 복구 완료!
+    # [라이팅] - Bridge 1~6, OK 1~7 완벽 반영
     wr_books = ["선택 안 함"] + list(WRITING_DATA.keys())
-    w_book = st.selectbox("라이팅 교재", wr_books, index=wr_books.index(v) if (v:=get_safe("라이팅교재")) in wr_books else 0)
+    w_book = st.selectbox("라이팅 교재", wr_books, index=find_index(wr_books, get_safe("라이팅교재")))
     w_ls = st.selectbox("└ 라이팅 세부 단원", WRITING_DATA[w_book]) if w_book != "선택 안 함" else "선택 안 함"
 
     st.divider()
 
-    # 4. 과제 정밀 분석 및 5. 총평 (기존 로직 동일)
+    # 4. 분석 및 생성
     up_file = st.file_uploader("과제 사진 업로드", type=['jpg', 'png'])
     domain = st.selectbox("분석 영역", ["선택 안 함", "문법", "어휘", "독해", "라이팅"])
     if st.button("🤖 과제 분석 시작") and up_file and domain != "선택 안 함":
-        with st.spinner("분석 중..."):
+        with st.spinner("AI 분석 중..."):
             try:
-                img = Image.open(up_file)
-                img.thumbnail((800, 800))
-                res = client.models.generate_content(model="gemini-1.5-flash", contents=[f"{domain} 과제 분석해줘", img])
+                img = Image.open(up_file); img.thumbnail((800, 800))
+                res = client.models.generate_content(model="gemini-1.5-flash", contents=[f"성취도 분석해줘", img])
                 st.session_state.ai_res = res.text
             except Exception as e: st.error(f"오류: {e}")
     ai_fb = st.text_area("분석 결과 확인", value=st.session_state.ai_res, height=120)
@@ -180,7 +190,7 @@ if st.session_state.page == 'input':
             display_class = f"{class_name} " if class_name != "선택 없음" else ""
             target_info = f"{grade} {display_class}{name} 학생"
             v_results = [f"• 1회차: {v1_c} / {v1_t} ({int((v1_c/v1_t)*100)}%)"]
-            if v2_c > 0: v_results.append(f"• 2회차: {v2_c} / {v2_t} ({int((v2_c/v2_t)*100)}%)")
+            if v2_c > 0: v_results.append(f"• 2회차: {v2_c} / {v2_t}")
             items = []
             if p_book != "선택 안 함": items.append(f"• 파닉스: {p_book} [{p_unit}]")
             if elt_book != "선택 안 함": items.append(f"• ELT독해: {elt_book} [{elt_unit}]")
