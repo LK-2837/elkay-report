@@ -16,7 +16,20 @@ else:
 
 # --- [상세 커리큘럼 데이터 정의] ---
 
-# 파닉스 상세 데이터 (이미지 분석 결과 반영)
+# [수정] 어휘 교재 목록 업데이트
+V_BOOKS_LIST = [
+    "능률 보카 기본 400", 
+    "능률 보카 필수 500", 
+    "[개정]교육청 초등어휘 900", 
+    "보카클리어 중학기본", 
+    "보카클리어 중학실력", 
+    "보카클리어 중학완성", # 신규 추가
+    "워드마스터 고등기본", # 신규 추가
+    "보카익스프레스[중등]", 
+    "기타"
+]
+
+# Phonics 상세 데이터 (이미지 분석 결과 반영)
 PHONICS_DATA = {
     "Phonics 1": [f"<Unit {i:02d}>" for i in range(1, 11)],
     "Phonics 2": [
@@ -56,7 +69,7 @@ PHONICS_DATA = {
     "Phonics 5": [
         "<Unit 01> (tail, snail, train, chain, play, tray, clay, spray) / He plays with clay. / All chains are on the tray. / All snails are on the train.",
         "<Unit 02> (bee, seed, tree, tea, meat, leaf, key, honey, money) / The key is old. / The bee paints a money tree. / A leaf is in the honey tea.",
-        "<Unit 03> (die, pie, tie, find, kind, blind, sigh, fight, night) / He is very kind. / She sighs at night. / They fight for the pie.",
+        "<Unit 03> (die, pie, tie, find, kind, blind, Birdie, fight, night) / He is very kind. / She sighs at night. / They fight for the pie.",
         "<Unit 04> (boat, coat, soap, road, grow, blow, crow, snow) / A crow blows the soap boat. / A plant grows in the snow. / A coat is on the road.",
         "<Unit 05> (new, chew, stew, blue, clue, glue, room, spoon, moon) / He finds the clue. / The blue glue is on the spoon. / The goat chews my new tie.",
         "<Unit 06> (paw, draw, straw, head, bread, thread, book, foot, look) / Draw the paw now. / Draw the head again. / Look at the open book now.",
@@ -67,9 +80,7 @@ PHONICS_DATA = {
     ]
 }
 
-V_BOOKS_LIST = ["능률 보카 기본 400", "능률 보카 필수 500", "능률 보카 교육청 900", "보카클리어 중학기본", "보카클리어 중학실력", "보카익스프레스", "기타"]
 ELT_BOOKS = ["30 Word Reading(1)", "30 Word Reading(2)", "40 Word Reading(1)", "40 Word Reading(2)", "40 Read it(1)", "40 Read it(2)", "40 Read it(3)", "60 Read it(1)", "60 Read it(2)", "60 Read it(3)"]
-# [수정] 영자신문이 별도 섹션으로 나갔으므로 기존 목록에서 제거
 READING_BOOKS_LIST = ["리딩튜터 스타터(1)", "리딩튜터 스타터(2)", "리딩튜터 스타터(3)", "리딩튜터 주니어(1)", "리딩튜터 주니어(2)", "리딩튜터 주니어(3)", "리딩튜터 주니어(4)", "수능토픽(레벨1)", "수능토픽(레벨2)", "수능토픽(레벨3)", "자체 독해 자료"]
 AZAR_BASIC_FULL_LIST = ["1-1 단수 인칭대명사+Be동사", "1-2 복수 인칭대명사+Be동사", "1-3 단수 명사+Be동사", "1-4 복수 명사+Be동사", "1-5 인칭대명사+Be동사 축약", "1-6 Be동사 부정문", "1-7 Be동사+형용사", "1-8 Be동사+장소", "1-9 Be동사 구조 요약", "2-1 This/That", "2-2 These/Those", "2-3 Be동사 Yes/No 의문문", "2-4 의문문 대답", "2-5 Where 의문문", "2-6 Have/Has", "2-7 소유격 인칭대명사", "2-8 What/Who 의문문", "3-1 현재시제 형태/의미", "3-2 빈도부사", "3-3 빈도부사 위치", "3-4 3인칭 단수 -es", "3-5 3인칭 단수 -y", "3-6 Has, Does, Goes", "3-7 Like/Want/Need/Would Like", "3-8 현재시제 부정문", "3-9 Yes/No 의문문", "3-10 Where/What 의문문", "3-11 When/What Time 의문문", "4-1 현재진행형 Be+-ing", "4-2 동사의 -ing", "4-3 현재진행 부정문", "4-4 현재진행 의문문", "4-5 현재 vs 진행", "4-6 상태동사", "4-7 See/Look/Watch/Hear/Listen", "4-8 Think About vs That", "4-9 명령문", "5-1 명사 단수/복수", "5-2 불규칙 복수형", "5-3 형용사의 쓰임", "5-4 명사: 주어/목적어", "5-5 주격/목적격 대명사", "5-6 전치사+목적격 대명사", "5-7 소유형용사/대명사", "5-8 명사 소유격", "5-9 Whose 의문문", "5-10 소유격 불규칙 복수", "6-1 셀 수 있는/없는 명사", "6-2 A vs An", "6-3 A/An vs Some", "6-4 물질명사 수량", "6-5 Many/Much/Few/Little", "6-6 정관사 The", "6-7 관사 미사용", "6-8 Some/Any", "7-1 비인칭주어 It(시간)", "7-2 시간 전치사", "7-3 비인칭주어 It(날씨)", "7-4 There+Be동사", "7-5 There+Be동사 의문문", "7-6 How Many 의문문", "7-7 장소 전치사", "7-8 위치 전치사", "7-9 Would Like", "7-10 Would Like vs Like"]
 WRITING_DATA = {
@@ -130,6 +141,7 @@ if st.session_state.page == 'input':
     # 2. 어휘 섹션
     st.subheader("🅰️ 2. 어휘 (Vocabulary)")
     vc1, vc2 = st.columns([2, 1])
+    # 어휘 교재 자동 선택 (수정된 목록 기반)
     v_def = V_BOOKS_LIST.index(student_data['어휘교재']) if student_data is not None and student_data['어휘교재'] in V_BOOKS_LIST else 0
     v_book = vc1.selectbox("어휘 교재", V_BOOKS_LIST, index=v_def)
     v_unit = vc2.text_input("어휘 Unit 입력", placeholder="예: <Unit 01>")
@@ -165,9 +177,8 @@ if st.session_state.page == 'input':
     elt_book = st.selectbox("ELT 독해 교재", elt_books, index=elt_def)
     elt_unit = st.text_input("└ ELT Unit 입력", placeholder="예: <Unit 01>")
 
-    # [신규 추가] 영자신문 섹션
+    # 영자신문 섹션
     ns_options = ["선택 안 함", "<Kinder>", "<Kids>"]
-    # 엑셀 불러오기 필드명이 '영자신문'일 경우 대응
     ns_def = ns_options.index(student_data['영자신문']) if student_data is not None and str(student_data['영자신문']) in ns_options else 0
     news_paper = st.selectbox("영자신문 선택", ns_options, index=ns_def)
 
