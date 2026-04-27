@@ -16,7 +16,7 @@ else:
 
 # --- [상세 커리큘럼 데이터 정의] ---
 
-# 어휘 교재 전체 목록 복구
+# 어휘 교재 전체 목록
 V_BOOKS_LIST = [
     "능률 보카 기본 400", "능률 보카 필수 500", "능률 보카 교육청 900", 
     "보카클리어 중학기본", "보카클리어 중학실력", "보카익스프레스", "기타"
@@ -28,7 +28,7 @@ ELT_BOOKS = [
     "40 Read it(1)", "40 Read it(2)", "40 Read it(3)", "60 Read it(1)", "60 Read it(2)", "60 Read it(3)"
 ]
 
-# 독해 교재 (영자신문 세분화 유지)
+# 독해 교재 (영자신문 세분화)
 READING_BOOKS = [
     "리딩튜터 스타터(1)", "리딩튜터 스타터(2)", "리딩튜터 스타터(3)",
     "리딩튜터 주니어(1)", "리딩튜터 주니어(2)", "리딩튜터 주니어(3)", "리딩튜터 주니어(4)",
@@ -36,7 +36,7 @@ READING_BOOKS = [
     "English Newspaper_Kids", "English Newspaper_Kinder", "자체 독해 자료"
 ]
 
-# 문법 (Azar 통합 리스트 유지)
+# 문법 (Azar 통합 리스트)
 AZAR_BASIC_FULL_LIST = [
     "1-1 단수 인칭대명사+Be동사", "1-2 복수 인칭대명사+Be동사", "1-3 단수 명사+Be동사", "1-4 복수 명사+Be동사", 
     "1-5 인칭대명사+Be동사 축약", "1-6 Be동사 부정문", "1-7 Be동사+형용사", "1-8 Be동사+장소", "1-9 Be동사 구조 요약",
@@ -55,7 +55,7 @@ AZAR_BASIC_FULL_LIST = [
     "7-5 There+Be동사 의문문", "7-6 How Many 의문문", "7-7 장소 전치사", "7-8 위치 전치사", "7-9 Would Like", "7-10 Would Like vs Like"
 ]
 
-# 라이팅 및 트레이닝북 전체 상세 목차 유지
+# 라이팅 전체 커리큘럼 완성본
 WRITING_DATA = {
     "OK Writing 1": ["Vocab", "Sentence 1~6", "Part 1. 전치사", "Part 2. 진행형", "Part 3. 부정문", "Part 4. and/because", "Part 5. 명령문", "Story 1-1~3-4"],
     "OK Writing 2": ["Vocab", "Sentence 1~6", "Part 1. 소유격", "Part 2. There is/are", "Part 3. but/because", "Part 4. 대상 2개", "Part 5. 의문문", "Part 6. look+형용사", "Part 7. don't", "Story 1-1~3-4"],
@@ -64,28 +64,31 @@ WRITING_DATA = {
     "OK Writing 5": ["Vocab", "Sentence 1~9", "Part 1. 명령문", "Part 2. 빈도부사", "Part 3. Does", "Part 4. to부정사", "Part 5. 원급", "Part 6. 비교급", "Part 7. 최상급", "Story 1-1~2-2"],
     "OK Writing 6": ["Vocab", "Sentence 1~8", "Part 1. 과거", "Part 2. have to", "Part 3. Did", "Part 4. didn't", "Part 5. 동명사주어", "Part 6. 의문사구", "Part 7. 접속사", "Story 1-1~1-6"],
     "OK Writing 7": ["Vocab", "Sentence 1~12", "Part 1. 동명사목적어", "Part 2. 가주어 it", "Part 3. 형용사보어", "Part 4. 재귀대명사", "Part 5. 의문사구", "Part 6. should", "Part 7. 지각동사", "Story 1-1~3-2"],
-    "Bridge Writing 시리즈": ["Vocab", "Sentence 1~6", "Part 1~6", "Story"],
+    "Bridge Writing Starter": ["Vocabulary", "Sentence 1~3", "Part 1. 복수", "Part 2. 소유격", "Part 3. 진행형", "Part 4. but", "Part 5. 명령문", "Story 1-1~3-3"],
+    "Bridge Writing 1": ["Vocabulary", "Sentence 1~5", "Part 1. 관사", "Part 2. 전치사", "Part 3. but/because", "Part 4. 부정문", "Part 5. 의문문", "Story 1-1~2-5"],
+    "Bridge Writing 2": ["Vocabulary", "Sentence 1~6", "Part 1. 의문사", "Part 2. 3인칭", "Part 3. 형용사보어", "Part 4. will", "Part 5. 's", "Part 6. Please", "Story 1-1~3-4"],
+    "Bridge Writing 3": ["Vocabulary", "Sentence 1~6", "Part 1. There", "Part 2. 소유격", "Part 3. 의문사", "Part 4. Don't", "Part 5. can", "Part 6. to", "Story 1-1~3-4"],
     "Training for Reading S1": ["Vocabulary", "Training 1. a/an/the+명사", "Training 2. 복수명사", "Training 3. 형용사+명사", "Training 4. 전치사+명사 (1)", "Training 5. 전치사+명사 (2)", "Training 6. 전치사+명사 (3)", "Training 7. 주인공+동작 (1)", "Training 8. 주인공+동작 (2)", "Training 9. 주인공+동작 (3)", "Training 10. 주인공+동작+대상 (1)", "Training 11. 주인공+동작+대상 (2)"],
     "Training for Reading S2": ["Vocabulary", "Training 1. 주인공+be+명사 (1)", "Training 2. 주인공+be+명사 (2)", "Training 3. 주인공+be+형용사", "Training 4. 주인공+be+명사/형용사 (1)", "Training 5. 주인공+be+명사/형용사 (2)", "Training 6. 주인공+be+명사/형용사 (3)", "Training 7. 주인공+be+전치사+명사 (1)", "Training 8. 주인공+be+전치사+명사 (2)", "Training 9. 주인공+be+전치사+명사 (3)", "Training 10. 주인공+be+명사/형용사/전치사 (Review)", "Training 11. 명령문"],
     "Training for Reading S3": ["Vocabulary", "Training 1. This/That+is+단수명사", "Training 2. This/That+is+소유격+명사 (1)", "Training 3. This/That+is+소유격+명사 (2)", "Training 4. 주인공과 대상이 ‘소유격+명사’", "Training 5. 주인공+동작+전치사+명사", "Training 6. 주인공+동작+대상+전치사+명사", "Training 7. 명령문: 동작+(대상)+전치사+명사", "Training 8. 주인공+be+~ing+(대상)", "Training 9. 주인공+be+~ing+(대상)+전치사+명사", "Story 1-1", "Story 1-2", "Story 1-3", "Story 2", "Story 3"],
     "Training for Reading S4": ["Vocabulary", "Training 1. 주인공+동작+대상(대명사)", "Training 2. 명사 and 명사", "Training 3. 형용사 and 형용사", "Training 4. 문장 and 문장", "Training 5. Because 주인공+동작", "Training 6. 주인공+동작+(대상)+부사", "Training 7. 부사+형용사", "Training 8. 부사+부사", "Training 9. 부사의 다양한 위치", "Story 1-1", "Story 1-2", "Story 1-3", "Story 2-1", "Story 2-2"]
 }
 
-# --- [메인 화면 로직] ---
+# --- [메인 로직] ---
 if "page" not in st.session_state: st.session_state.page = 'input'
 if "ai_res" not in st.session_state: st.session_state.ai_res = ""
 
 if st.session_state.page == 'input':
     st.title("🍎 엘케이어학원 학습 리포트") 
 
-    # [엑셀 불러오기 섹션 - 세로형 대응 유지]
+    # [세로형 엑셀 불러오기 섹션]
     with st.expander("📂 학생 교재 목록(엑셀) 불러오기", expanded=False):
         uploaded_excel = st.file_uploader("항목명이 세로(A열)로 된 엑셀 파일을 업로드하세요", type=['xlsx'])
         student_data = None
         if uploaded_excel:
             df_raw = pd.read_excel(uploaded_excel, index_col=0) 
             df = df_raw.T.reset_index() 
-            st.success("세로형 엑셀 파일을 성공적으로 읽어 뒤집었습니다!")
+            st.success("엑셀 파일을 성공적으로 읽어 뒤집었습니다!")
             sel_student = st.selectbox("학생 선택", ["선택 안 함"] + list(df['이름'].unique()))
             if sel_student != "선택 안 함":
                 student_data = df[df['이름'] == sel_student].iloc[0]
@@ -109,10 +112,9 @@ if st.session_state.page == 'input':
 
     st.divider()
 
-    # 2. 어휘 섹션 (전체 목록 복구 및 회차별 입력)
+    # 2. 어휘 섹션
     st.subheader("🅰️ 2. 어휘 (Vocabulary)")
     vc1, vc2 = st.columns([2, 1])
-    
     v_def = V_BOOKS_LIST.index(student_data['어휘교재']) if student_data is not None and student_data['어휘교재'] in V_BOOKS_LIST else 0
     v_book = vc1.selectbox("어휘 교재", V_BOOKS_LIST, index=v_def)
     v_unit = vc2.text_input("Unit 입력", placeholder="예: <Unit 01>")
@@ -131,7 +133,7 @@ if st.session_state.page == 'input':
 
     st.divider()
 
-    # 3. 주교재 수업 상세 (Unit 입력창 분리 유지)
+    # 3. 주교재 및 수업 상세 (Unit 입력창 분리 및 텍스트화)
     st.subheader("📚 3. 주교재 및 수업 상세")
     
     elt_books = ["선택 안 함"] + ELT_BOOKS
